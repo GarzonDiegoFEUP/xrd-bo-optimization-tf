@@ -20,6 +20,7 @@ PULSE_PARAMETER_COLUMNS = ("se_pulse_on_ms", "se_pulse_off_ms")
 PROCESS_MERGE_COLUMNS = (
     "se_pulse_on_ms",
     "se_pulse_off_ms",
+    "se_pulse_count",
     "cbc_ratio",
     "n_spin_cycles",
     "mo_coated",

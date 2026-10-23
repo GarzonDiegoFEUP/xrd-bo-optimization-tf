@@ -130,8 +130,9 @@ def plot_parameter_metrics(
     figure, axes = plt.subplots(
         2,
         len(parameter_columns),
-        figsize=(3.6 * len(parameter_columns), 8),
+        figsize=(4.2 * len(parameter_columns), 9),
         sharex="col",
+        sharey="row",
     )
     scatter = None
     for column_index, parameter in enumerate(parameter_columns):
@@ -338,6 +339,7 @@ def plot_correlation_bars(
     parameter_columns: tuple[str, ...],
     target_columns: tuple[str, ...] = ("phase_purity", "crystallinity_norm", "objective"),
     output_path: Path | None = None,
+    figsize: tuple[float, float] = (12, 6),
 ) -> plt.Figure:
     """Bar chart of Spearman rank correlation between parameters and targets."""
     correlations = pd.DataFrame(
@@ -350,7 +352,7 @@ def plot_correlation_bars(
         },
         index=list(parameter_columns),
     )
-    figure, axis = plt.subplots(figsize=(12, 6))
+    figure, axis = plt.subplots(figsize=figsize)
     correlations.plot.bar(ax=axis, width=0.8, edgecolor="k", linewidth=0.5)
     axis.axhline(0, color="k", linewidth=0.8)
     axis.set_ylabel("Spearman correlation")

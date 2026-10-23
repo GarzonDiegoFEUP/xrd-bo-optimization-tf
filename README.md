@@ -14,7 +14,9 @@ selenium pulse on/off times, the precursor Cu/(Ba+Cu) ratio (CBC), and the
 spin-to-selenization day gap. Each synthesis record also carries the number of
 spin-coating cycles (deposited layers, excluding dynamic-dispense/seed-layer
 preparation steps) and a Mo-coating flag (substrate) as reported descriptors.
-Two optimization strategies are provided:
+The exploratory correlation plot in notebook 3 ranks all twelve tracked
+parameters, not just the nine in the optimization space. Two optimization
+strategies are provided:
 
 - **Single objective** (notebook 3, scikit-optimize): maximize
   `0.7 × phase_purity + 0.3 × crystallinity_norm`.

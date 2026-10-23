@@ -154,8 +154,10 @@ def build_report(output_path: Path | None = None) -> Path:
         f"Across the analyzed films the mean phase purity is {df_bo['phase_purity'].mean():.2f} and mean "
         f"crystallinity is {df_bo['crystallinity'].mean():.2f}. The best film is {best['sample_id']} "
         f"(objective {best['objective']:.2f}; purity {best['phase_purity']:.2f}, crystallinity "
-        f"{best['crystallinity']:.2f}). Rank (Spearman) correlation with the objective identifies "
-        f"selenization time as the dominant synthesis lever; bake temperatures and pulse timing are weaker."
+        f"{best['crystallinity']:.2f}). Rank (Spearman) correlation with the objective was computed "
+        f"across all twelve tracked parameters (the nine BO inputs plus Se pulse count, spin-coating "
+        f"cycles, and the Mo-coating flag); selenization time is the dominant synthesis lever, with "
+        f"bake temperatures and pulse timing weaker."
     )
     story.append(Paragraph(results, styles["BodySmall"]))
     for name in ("bacuse2_bo_correlations.png", "bacuse2_bo_gp_surface.png"):
