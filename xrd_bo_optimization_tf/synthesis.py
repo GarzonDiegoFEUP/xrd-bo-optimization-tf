@@ -157,16 +157,23 @@ def extract_cbc_ratios(archive_paths: list[Path]) -> dict[str, float]:
 def _count_spin_cycles(steps: Any) -> int:
     """Count spin-coating cycles as the number of INLSpinCoatingStep steps.
 
-    INLHotplateAnnealingStep (soft/hard bakes) is not counted.
+    INLHotplateAnnealingStep (soft/hard bakes) is not counted, and neither are
+    INLSpinCoatingStep entries whose name marks them as layer preparation rather
+    than an actual deposited layer (dynamic dispense / seed layer).
     """
     if not isinstance(steps, list):
         return 1
-    count = sum(
-        1
-        for step in steps
-        if isinstance(step, dict)
-        and "INLSpinCoatingStep" in str(step.get("m_def", ""))
-    )
+    preparation_keywords = ("dynamic", "dispense", "seed layer")
+    count = 0
+    for step in steps:
+        if not isinstance(step, dict):
+            continue
+        if "INLSpinCoatingStep" not in str(step.get("m_def", "")):
+            continue
+        name = str(step.get("name") or "").lower()
+        if any(keyword in name for keyword in preparation_keywords):
+            continue
+        count += 1
     return count or 1
 
 
