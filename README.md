@@ -12,7 +12,8 @@ The optimization space has nine parameters: spin speed, soft-bake and
 hard-bake temperatures, selenization temperature, selenization time, the
 selenium pulse on/off times, the precursor Cu/(Ba+Cu) ratio (CBC), and the
 spin-to-selenization day gap. Each synthesis record also carries the number of
-spin-coating cycles and a Mo-coating flag (substrate) as reported descriptors.
+spin-coating cycles (deposited layers, excluding dynamic-dispense/seed-layer
+preparation steps) and a Mo-coating flag (substrate) as reported descriptors.
 Two optimization strategies are provided:
 
 - **Single objective** (notebook 3, scikit-optimize): maximize
