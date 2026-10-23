@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+xrd_bo_env/
+.volumes/
+.ipynb_checkpoints/
