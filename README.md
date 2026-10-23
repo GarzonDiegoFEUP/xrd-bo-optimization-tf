@@ -10,8 +10,12 @@ optimizer to suggest synthesis conditions that maximize a combined score.
 
 The optimization space has seven parameters: spin speed, soft-bake and
 hard-bake temperatures, selenization temperature, selenization time, and the
-selenium pulse on/off times. The objective is
-`0.7 × phase_purity + 0.3 × crystallinity_norm`.
+selenium pulse on/off times. Two optimization strategies are provided:
+
+- **Single objective** (notebook 3, scikit-optimize): maximize
+  `0.7 × phase_purity + 0.3 × crystallinity_norm`.
+- **Multi-objective** (notebook 4, Ax/BoTorch): maximize phase purity and
+  normalized crystallinity separately and trace the Pareto front (qNEHVI).
 
 ## Repository structure
 
@@ -29,7 +33,12 @@ selenium pulse on/off times. The objective is
      matches peaks, computes metrics, and writes
      `data/results/bacuse2_xrd_analysis_metrics.csv` plus figures.
   3. `3.bo_xrd.ipynb` — exploratory analysis (Spearman correlations, GP
-     objective surface) and Bayesian-optimization suggestions.
+     objective surface) and single-objective Bayesian-optimization suggestions
+     (scikit-optimize, weighted objective).
+  4. `4.bo_xrd_ax.ipynb` — multi-objective Bayesian optimization with Ax
+     (BoTorch): phase purity and crystallinity are separate objectives, the
+     Pareto front is found via qNEHVI, and suggestions are compared against
+     notebook 3.
 - `data/raw/` — local `.xrdml` backups; `data/raw/nomad_staging/` is a
   gitignored cache of NOMAD archives downloaded by notebook 1.
 - `data/references/` — ICDD reference cards (`.rtf`):

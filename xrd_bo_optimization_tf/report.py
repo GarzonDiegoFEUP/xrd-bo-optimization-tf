@@ -54,6 +54,42 @@ def _figure(path: Path, width: float = CONTENT_WIDTH) -> Image | None:
     return Image(str(path), width=width, height=height)
 
 
+def _suggestions_table(suggestions: pd.DataFrame, parameter_columns) -> Table:
+    """Build a styled table of suggested conditions."""
+    cols = ["rank", *parameter_columns]
+    has_std = "predicted_std" in suggestions.columns
+    if "predicted_objective" in suggestions.columns:
+        cols += ["predicted_objective"] + (["predicted_std"] if has_std else [])
+    header = [
+        c.replace("_", " ").replace(" ms", " (ms)").replace(" s", " (s)").replace(" c", " (°C)")
+        for c in cols
+    ]
+    table_data = [header]
+    for _, row in suggestions.iterrows():
+        entry = [int(row["rank"]), *[f"{row[c]:.0f}" for c in parameter_columns]]
+        if "predicted_objective" in suggestions.columns:
+            entry.append(f"{row['predicted_objective']:.3f}")
+            if has_std:
+                entry.append(f"{row['predicted_std']:.3f}")
+        table_data.append(entry)
+    table = Table(table_data, repeatRows=1, hAlign="LEFT")
+    table.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1a3b5d")),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, -1), 7.5),
+                ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#eef3f8")]),
+                ("GRID", (0, 0), (-1, -1), 0.25, colors.HexColor("#b0bec5")),
+                ("ALIGN", (1, 0), (-1, -1), "CENTER"),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ]
+        )
+    )
+    return table
+
+
 def build_report(output_path: Path | None = None) -> Path:
     """Assemble the analysis + BO report PDF and return its path."""
     output_path = output_path or (REPORTS_DIR / "bacuse2_xrd_bo_report.pdf")
@@ -126,32 +162,7 @@ def build_report(output_path: Path | None = None) -> Path:
         styles["BodySmall"],
     ))
     story.append(Spacer(1, 0.15 * cm))
-
-    cols = ["rank", *df_bo.attrs["parameter_columns"], "predicted_objective", "predicted_std"]
-    table_data = [[c.replace("_", " ").replace(" ms", " (ms)").replace(" s", " (s)").replace(" c", " (°C)") for c in cols]]
-    for _, row in suggestions.iterrows():
-        table_data.append([
-            int(row["rank"]),
-            *[f"{row[c]:.0f}" for c in df_bo.attrs["parameter_columns"]],
-            f"{row['predicted_objective']:.3f}",
-            f"{row['predicted_std']:.3f}",
-        ])
-    table = Table(table_data, repeatRows=1, hAlign="LEFT")
-    table.setStyle(
-        TableStyle(
-            [
-                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1a3b5d")),
-                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-                ("FONTSIZE", (0, 0), (-1, -1), 7.5),
-                ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#eef3f8")]),
-                ("GRID", (0, 0), (-1, -1), 0.25, colors.HexColor("#b0becs") if False else colors.HexColor("#b0bec5")),
-                ("ALIGN", (1, 0), (-1, -1), "CENTER"),
-                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ]
-        )
-    )
-    story.append(table)
+    story.append(_suggestions_table(suggestions, df_bo.attrs["parameter_columns"]))
     story.append(Spacer(1, 0.2 * cm))
     top = suggestions.iloc[0]
     story.append(Paragraph(
@@ -166,6 +177,26 @@ def build_report(output_path: Path | None = None) -> Path:
     if fig is not None:
         story.append(Spacer(1, 0.15 * cm))
         story.append(fig)
+
+    # 5. Multi-objective (Ax) optimization
+    moo_path = RESULTS_DATA_DIR / "bacuse2_ax_moo_suggestions.csv"
+    if moo_path.is_file():
+        moo = pd.read_csv(moo_path)
+        story.append(Paragraph("5. Multi-objective optimization (Ax)", styles["SectionHead"]))
+        story.append(Paragraph(
+            "A complementary multi-objective search treats phase purity and normalized crystallinity "
+            "as two separate objectives instead of one weighted score. Ax (BoTorch) fits a Gaussian "
+            "process per metric and finds the Pareto front via qNEHVI hypervolume maximization. "
+            "The suggested conditions below are Pareto-optimal candidates spanning the "
+            "purity–crystallinity trade-off.",
+            styles["BodySmall"],
+        ))
+        story.append(Spacer(1, 0.15 * cm))
+        fig = _figure(FIGURES_DIR / "bacuse2_ax_pareto_front.png")
+        if fig is not None:
+            story.append(fig)
+            story.append(Spacer(1, 0.15 * cm))
+        story.append(_suggestions_table(moo, df_bo.attrs["parameter_columns"]))
 
     doc = SimpleDocTemplate(
         str(output_path),
