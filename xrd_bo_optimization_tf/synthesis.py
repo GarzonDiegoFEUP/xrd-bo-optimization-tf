@@ -119,6 +119,124 @@ def extract_processing_archive(archive_path: Path) -> dict[str, Any] | None:
     }
 
 
+def _element_moles(component: dict[str, Any], element: str) -> float:
+    """Moles of an element contributed by one solution component."""
+    amount = component.get("amount_of_substance")
+    if amount is None:
+        return 0.0
+    formula = str((component.get("pure_substance") or {}).get("molecular_formula", ""))
+    # Count atoms of the element in the molecular formula (e.g. "Ba" -> 1).
+    count = 0
+    for symbol, num in re.findall(r"([A-Z][a-z]?)(\d*)", formula):
+        if symbol == element:
+            count += int(num) if num else 1
+    return float(amount) * count
+
+
+def extract_cbc_ratios(archive_paths: list[Path]) -> dict[str, float]:
+    """Map solution name to its Cu/(Ba+Cu) molar ratio from Solution archives."""
+    ratios: dict[str, float] = {}
+    for archive_path in archive_paths:
+        data = read_archive(archive_path).get("data", {})
+        if "solution.general.Solution" not in str(data.get("m_def", "")):
+            continue
+        name = str(data.get("name", "")).split()
+        if not name:
+            continue
+        cu = ba = 0.0
+        for component in data.get("components", []):
+            if not isinstance(component, dict):
+                continue
+            cu += _element_moles(component, "Cu")
+            ba += _element_moles(component, "Ba")
+        if cu + ba > 0:
+            ratios[name[0]] = cu / (cu + ba)
+    return ratios
+
+
+def _count_spin_cycles(steps: Any) -> int:
+    """Count spin-coating cycles as the number of INLSpinCoatingStep steps.
+
+    INLHotplateAnnealingStep (soft/hard bakes) is not counted.
+    """
+    if not isinstance(steps, list):
+        return 1
+    count = sum(
+        1
+        for step in steps
+        if isinstance(step, dict)
+        and "INLSpinCoatingStep" in str(step.get("m_def", ""))
+    )
+    return count or 1
+
+
+def extract_process_metadata(archive_paths: list[Path]) -> dict[str, dict[str, Any]]:
+    """Per-sample solution ref, spin-cycle count, and spin datetime.
+
+    Read from INLSpinCoating process records: top-level `solution` list, the
+    `steps` list (cycles counted by _count_spin_cycles), and `datetime`.
+    """
+    info: dict[str, dict[str, Any]] = {}
+    for archive_path in archive_paths:
+        data = read_archive(archive_path).get("data", {})
+        m_def = str(data.get("m_def", ""))
+        if "INLSpinCoating" not in m_def or "Recipe" in m_def:
+            continue
+        sample_id = extract_sample_id_from_archive(archive_path, data)
+        if not sample_id:
+            continue
+        steps = data.get("steps", [])
+        n_cycles = _count_spin_cycles(steps)
+        solution = data.get("solution", [])
+        solution_name = None
+        if isinstance(solution, list) and solution and isinstance(solution[0], dict):
+            solution_name = str(solution[0].get("name", "")).split()[0] or None
+        entry = info.setdefault(sample_id, {})
+        entry.setdefault("solution_key", solution_name)
+        entry["n_spin_cycles"] = n_cycles or 1
+        entry.setdefault("spin_datetime", data.get("datetime"))
+    return info
+
+
+def extract_mo_coating(archive_paths: list[Path]) -> dict[str, bool]:
+    """Flag Mo-coated films.
+
+    Mo coating is recorded inconsistently across the database, so we check all
+    three places: a Mo layer in the stack, an 'SLG-Mo' substrate name, and the
+    substrate's `material` field (e.g. 'SLG/Mo').
+    """
+    # Map substrate name -> material (e.g. 'SLG' or 'SLG/Mo').
+    substrate_material: dict[str, str] = {}
+    for archive_path in archive_paths:
+        data = read_archive(archive_path).get("data", {})
+        if "INLSubstrate" in str(data.get("m_def", "")):
+            name = str(data.get("name", ""))
+            if name:
+                substrate_material[name] = str(data.get("material", ""))
+
+    coated: dict[str, bool] = {}
+    for archive_path in archive_paths:
+        data = read_archive(archive_path).get("data", {})
+        m_def = str(data.get("m_def", ""))
+        if "INLThinFilmStack" not in m_def or "Reference" in m_def:
+            continue
+        sample_id = str(data.get("name", "")).split()
+        if not sample_id:
+            continue
+        layers = data.get("layers", [])
+        layer_has_mo = any(
+            isinstance(layer, dict) and "Mo" in str(layer.get("name", ""))
+            for layer in layers
+        )
+        substrate = data.get("substrate") or {}
+        substrate_name = str(substrate.get("name", "")) if isinstance(substrate, dict) else ""
+        material = substrate_material.get(substrate_name, "")
+        coated[sample_id[0]] = (
+            layer_has_mo or "Mo" in substrate_name or "Mo" in material
+        )
+    return coated
+
+
 def build_synthesis_database(archive_paths: list[Path]) -> dict[str, dict[str, Any]]:
     """Combine processing archives into one synthesis record per sample."""
     paths = list(archive_paths)
@@ -195,7 +313,33 @@ def build_synthesis_database(archive_paths: list[Path]) -> dict[str, dict[str, A
             if sample_id in synthesis_db:
                 synthesis_db[sample_id]["selenization"] = parameters
 
+    # Enrich records with literature-relevant process descriptors.
+    cbc_ratios = extract_cbc_ratios(paths)
+    process_meta = extract_process_metadata(paths)
+    mo_coating = extract_mo_coating(paths)
+    se_datetimes = extract_selenization_datetimes(paths)
+    for sample_id, record in synthesis_db.items():
+        meta = process_meta.get(sample_id, {})
+        solution_key = meta.get("solution_key")
+        record["cbc_ratio"] = cbc_ratios.get(solution_key)
+        record["n_spin_cycles"] = meta.get("n_spin_cycles", 1)
+        record["mo_coated"] = mo_coating.get(sample_id)
+        record["spin_to_se_days"] = _days_between(
+            meta.get("spin_datetime"), se_datetimes.get(sample_id)
+        )
+
     return synthesis_db
+
+
+def _days_between(start: Any, end: Any) -> float | None:
+    """Whole days between two ISO datetimes, or None if either is missing."""
+    if not start or not end:
+        return None
+    try:
+        delta = pd.to_datetime(end) - pd.to_datetime(start)
+    except (ValueError, TypeError):
+        return None
+    return round(delta.total_seconds() / 86400.0, 2)
 
 
 def build_synthesis_dataframe(
@@ -242,6 +386,10 @@ def build_synthesis_dataframe(
                 "se_pulse_count": selenization.get("se_pulse_count"),
                 "solution_used_name": record.get("solution_used_name"),
                 "solution_volume_ml": record.get("solution_volume_ml"),
+                "cbc_ratio": record.get("cbc_ratio"),
+                "n_spin_cycles": record.get("n_spin_cycles", 1),
+                "mo_coated": record.get("mo_coated"),
+                "spin_to_se_days": record.get("spin_to_se_days"),
                 "num_archives": record.get("num_archives", 0),
                 "has_annealing": record.get("has_annealing", False),
             }
@@ -250,6 +398,7 @@ def build_synthesis_dataframe(
     if not dataframe.empty:
         # Pulse count is a whole number; keep it nullable-integer for clean CSVs.
         dataframe["se_pulse_count"] = dataframe["se_pulse_count"].astype("Int64")
+        dataframe["n_spin_cycles"] = dataframe["n_spin_cycles"].astype("Int64")
     return dataframe
 
 
@@ -299,6 +448,24 @@ def extract_star_selenization_archive(
         if isinstance(sample, dict) and sample.get("name")
     }
     return {sample_id: parameters.copy() for sample_id in sample_ids}
+
+
+def extract_selenization_datetimes(archive_paths: list[Path]) -> dict[str, str]:
+    """Map each sample to the datetime of its STAR selenization record."""
+    datetimes: dict[str, str] = {}
+    for archive_path in archive_paths:
+        data = read_archive(archive_path).get("data", {})
+        if not isinstance(data, dict) or "STARSelenizationAnnealing" not in str(
+            data.get("m_def", "")
+        ) or "Recipe" in str(data.get("m_def", "")):
+            continue
+        timestamp = data.get("datetime")
+        if not timestamp:
+            continue
+        for sample in data.get("samples", []):
+            if isinstance(sample, dict) and sample.get("name"):
+                datetimes[str(sample["name"]).split()[0]] = timestamp
+    return datetimes
 
 
 def collect_sample_ids(root: Path) -> set[str]:

@@ -8,9 +8,12 @@ BaSeO₄ are matched for purity but not drawn in plots). It computes phase purit
 and crystallinity for each film, then uses a Gaussian-process Bayesian
 optimizer to suggest synthesis conditions that maximize a combined score.
 
-The optimization space has seven parameters: spin speed, soft-bake and
-hard-bake temperatures, selenization temperature, selenization time, and the
-selenium pulse on/off times. Two optimization strategies are provided:
+The optimization space has nine parameters: spin speed, soft-bake and
+hard-bake temperatures, selenization temperature, selenization time, the
+selenium pulse on/off times, the precursor Cu/(Ba+Cu) ratio (CBC), and the
+spin-to-selenization day gap. Each synthesis record also carries the number of
+spin-coating cycles and a Mo-coating flag (substrate) as reported descriptors.
+Two optimization strategies are provided:
 
 - **Single objective** (notebook 3, scikit-optimize): maximize
   `0.7 × phase_purity + 0.3 × crystallinity_norm`.

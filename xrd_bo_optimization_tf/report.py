@@ -56,6 +56,8 @@ def _figure(path: Path, width: float = CONTENT_WIDTH) -> Image | None:
 
 def _suggestions_table(suggestions: pd.DataFrame, parameter_columns) -> Table:
     """Build a styled table of suggested conditions."""
+    # Only show parameters actually present in this suggestions table.
+    parameter_columns = [c for c in parameter_columns if c in suggestions.columns]
     cols = ["rank", *parameter_columns]
     has_std = "predicted_std" in suggestions.columns
     if "predicted_objective" in suggestions.columns:
@@ -97,7 +99,9 @@ def build_report(output_path: Path | None = None) -> Path:
 
     metrics = pd.read_csv(GENERATED_XRD_METRICS_CSV)
     synthesis = pd.read_csv(NOMAD_SYNTHESIS_CSV)
-    df_bo = prepare_optimization_data(metrics, synthesis=synthesis, include_pulse=True)
+    df_bo = prepare_optimization_data(
+        metrics, synthesis=synthesis, include_pulse=True, include_process=True
+    )
     suggestions = pd.read_csv(RESULTS_DATA_DIR / "bacuse2_bo_suggestions.csv")
 
     styles = _styles()
@@ -115,13 +119,17 @@ def build_report(output_path: Path | None = None) -> Path:
         f"{len(synthesis)} α-BaCu<sub>2</sub>Se<sub>2</sub> thin-film samples (INLThinFilmStack entries). "
         f"Synthesis parameters (spin coating, soft/hard bake, selenization) and selenium-pulse settings were "
         f"extracted for all samples; {int(synthesis['se_pulse_on_ms'].notna().sum())} include pulse on/off data. "
+        f"Each record also carries the precursor Cu/(Ba+Cu) ratio, the number of spin-coating cycles, "
+        f"the Mo-coating flag, and the spin-to-selenization day gap. "
         f"For the {len(metrics)} films with XRD scans, diffraction patterns were matched against ICDD reference "
         f"cards for the α-BaCu<sub>2</sub>Se<sub>2</sub> target (01-080-2950) and the Cu<sub>2</sub>Se (04-024-2128) "
         f"and BaSeO<sub>3</sub> (00-053-0141) impurities. Phase purity and crystallinity (1/FWHM of the strongest "
         f"target match) were computed per film. A Gaussian-process Bayesian optimizer was trained on the "
         f"{len(df_bo)} complete films to recommend the next synthesis conditions, optimizing "
-        f"objective = 0.7 × phase purity + 0.3 × normalized crystallinity over a 7-parameter space "
-        f"(spin speed, bake temperatures, selenization temperature/time, and Se pulse on/off)."
+        f"objective = 0.7 × phase purity + 0.3 × normalized crystallinity over a "
+        f"{len(df_bo.attrs['parameter_columns'])}-parameter space "
+        f"(spin speed, bake temperatures, selenization temperature/time, Se pulse on/off, "
+        f"Cu/(Ba+Cu) ratio, and the spin-to-selenization day gap)."
     )
     story.append(Paragraph(done, styles["BodySmall"]))
 

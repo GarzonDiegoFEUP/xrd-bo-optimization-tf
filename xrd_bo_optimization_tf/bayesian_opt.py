@@ -15,31 +15,49 @@ from .config import (
 # with selenization_time_s and is intentionally excluded).
 PULSE_PARAMETER_COLUMNS = ("se_pulse_on_ms", "se_pulse_off_ms")
 
+# Process descriptors carried by the synthesis table; cbc_ratio and
+# spin_to_se_days are continuous and can join the optimization space.
+PROCESS_MERGE_COLUMNS = (
+    "se_pulse_on_ms",
+    "se_pulse_off_ms",
+    "cbc_ratio",
+    "n_spin_cycles",
+    "mo_coated",
+    "spin_to_se_days",
+)
+# Continuous, non-collinear process variables that may be optimized.
+PROCESS_BO_COLUMNS = ("cbc_ratio", "spin_to_se_days")
+
 
 def prepare_optimization_data(
     metrics: pd.DataFrame,
     parameter_columns: tuple[str, ...] = BO_PARAMETER_COLUMNS,
     synthesis: pd.DataFrame | None = None,
     include_pulse: bool = False,
+    include_process: bool = False,
 ) -> pd.DataFrame:
     """Filter incomplete rows and calculate the project's weighted objective.
 
-    When include_pulse is True, pulse parameters are merged from the synthesis
-    table (keyed on sample_id) and appended to the optimization space.
+    When include_pulse / include_process is True, the synthesis table is merged
+    in (keyed on sample_id) and those parameters join the optimization space.
     """
     parameters = tuple(parameter_columns)
-    if include_pulse:
+    if include_pulse or include_process:
         if synthesis is None:
-            raise ValueError("include_pulse=True requires the synthesis table")
+            raise ValueError("include_pulse/include_process require the synthesis table")
         if "se_pulse_count" in parameters:
             raise ValueError(
                 "se_pulse_count is collinear with selenization_time_s; exclude it"
             )
-        pulse = synthesis[
-            ["sample_id", *PULSE_PARAMETER_COLUMNS]
+        merge_cols = ["sample_id", *PROCESS_MERGE_COLUMNS]
+        merged = synthesis[
+            [c for c in merge_cols if c in synthesis.columns]
         ].drop_duplicates("sample_id")
-        metrics = metrics.merge(pulse, on="sample_id", how="left")
-        parameters = (*parameters, *PULSE_PARAMETER_COLUMNS)
+        metrics = metrics.merge(merged, on="sample_id", how="left")
+        if include_pulse:
+            parameters = (*parameters, *PULSE_PARAMETER_COLUMNS)
+        if include_process:
+            parameters = (*parameters, *PROCESS_BO_COLUMNS)
 
     required = {
         *parameters,
