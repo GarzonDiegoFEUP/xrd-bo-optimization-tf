@@ -37,8 +37,9 @@ def extract_sample_id_from_archive(
 def _temperature_c(step: dict[str, Any]) -> float | None:
     if step.get("temperature_K") is not None:
         return float(step["temperature_K"]) - 273.15
+    # INL hotplate-annealing steps store `temperature` in Kelvin.
     if step.get("temperature") is not None:
-        return float(step["temperature"])
+        return float(step["temperature"]) - 273.15
     return None
 
 
@@ -203,6 +204,9 @@ def build_synthesis_dataframe(
     """Convert extracted records into the project synthesis-table schema."""
     rows = []
     for sample_id, record in sorted(synthesis_db.items()):
+        # Skip false-positive IDs derived from archive filenames (contain a dot).
+        if "." in sample_id:
+            continue
         has_data = any(
             record.get(key)
             for key in ("spin_coating", "soft_bake", "hard_bake", "selenization")
@@ -233,13 +237,20 @@ def build_synthesis_dataframe(
                 "selenization_temp_c": selenization.get("temperature_c"),
                 "selenization_time_s": selenization.get("time_s"),
                 "selenization_pressure_pa": selenization.get("working_pressure_pa"),
+                "se_pulse_on_ms": selenization.get("se_pulse_on_ms"),
+                "se_pulse_off_ms": selenization.get("se_pulse_off_ms"),
+                "se_pulse_count": selenization.get("se_pulse_count"),
                 "solution_used_name": record.get("solution_used_name"),
                 "solution_volume_ml": record.get("solution_volume_ml"),
                 "num_archives": record.get("num_archives", 0),
                 "has_annealing": record.get("has_annealing", False),
             }
         )
-    return pd.DataFrame(rows)
+    dataframe = pd.DataFrame(rows)
+    if not dataframe.empty:
+        # Pulse count is a whole number; keep it nullable-integer for clean CSVs.
+        dataframe["se_pulse_count"] = dataframe["se_pulse_count"].astype("Int64")
+    return dataframe
 
 
 def extract_star_selenization_archive(
@@ -257,12 +268,29 @@ def extract_star_selenization_archive(
         return {}
     step = steps[0]
     temperature_k = step.get("substrate_temperature")
+
+    # Selenium pulse parameters live in the step's selenium_environment block.
+    selenium_env = step.get("selenium_environment")
+    selenium_env = selenium_env if isinstance(selenium_env, dict) else {}
+    time_on_s = selenium_env.get("time_on")
+    time_off_s = selenium_env.get("time_off")
+    total_on_s = selenium_env.get("total_se_on_time")
+    duration_s = step.get("duration")
+    pulse_count = None
+    if time_on_s and total_on_s:
+        pulse_count = int(round(float(total_on_s) / float(time_on_s)))
+    elif time_on_s and time_off_s and duration_s:
+        pulse_count = int(round(float(duration_s) / (float(time_on_s) + float(time_off_s))))
+
     parameters = {
         "temperature_c": (
             float(temperature_k) - 273.15 if temperature_k is not None else None
         ),
-        "time_s": step.get("duration"),
+        "time_s": duration_s,
         "working_pressure_pa": step.get("chamber_pressure"),
+        "se_pulse_on_ms": float(time_on_s) * 1000 if time_on_s is not None else None,
+        "se_pulse_off_ms": float(time_off_s) * 1000 if time_off_s is not None else None,
+        "se_pulse_count": pulse_count,
     }
     samples = archive_data.get("samples", [])
     sample_ids = {
@@ -273,7 +301,65 @@ def extract_star_selenization_archive(
     return {sample_id: parameters.copy() for sample_id in sample_ids}
 
 
-def load_synthesis_archives(root: Path) -> dict[str, dict[str, Any]]:
-    """Extract synthesis records from every archive under a local NOMAD export."""
+def collect_sample_ids(root: Path) -> set[str]:
+    """Collect canonical sample IDs from INLThinFilmStack archives.
+
+    INLThinFilmStack entries are the real films; bare INLThinFilm layers and
+    archive filenames are not samples. The sample_id is the leading token of the
+    stack name (e.g. "260721D1 BaCuSe" -> "260721D1").
+    """
+    sample_ids: set[str] = set()
+    for archive_path in iter_archive_files(root):
+        archive_data = read_archive(archive_path).get("data", {})
+        if not isinstance(archive_data, dict):
+            continue
+        m_def = str(archive_data.get("m_def", ""))
+        if "INLThinFilmStack" not in m_def or "Reference" in m_def:
+            continue
+        name = str(archive_data.get("name", "")).split()
+        if name and any(character.isdigit() for character in name[0]):
+            sample_ids.add(name[0])
+    return sample_ids
+
+
+def load_synthesis_archives(
+    root: Path, only_samples: set[str] | None = None
+) -> dict[str, dict[str, Any]]:
+    """Extract synthesis records from every archive under a local NOMAD export.
+
+    When only_samples is None, it defaults to the INLThinFilmStack sample IDs so
+    that bare INLThinFilm layers and archive-filename artifacts are excluded.
+    """
     archive_paths = list(iter_archive_files(root))
-    return build_synthesis_database(archive_paths)
+    synthesis_db = build_synthesis_database(archive_paths)
+    if only_samples is None:
+        only_samples = collect_sample_ids(root)
+    return {
+        sample_id: record
+        for sample_id, record in synthesis_db.items()
+        if sample_id in only_samples
+    }
+
+
+def fetch_nomad_archives_to_staging(staging_dir: Path) -> list[Path]:
+    """Download all entry archives from the configured BaCuSe uploads to staging.
+
+    The saved *.archive.json files are laid out per upload_id so the existing
+    local extraction path (load_synthesis_archives) can consume them unchanged.
+    Returns the list of written archive paths.
+    """
+    from . import nomad_api
+
+    staging_dir.mkdir(parents=True, exist_ok=True)
+    written: list[Path] = []
+    for upload_id in nomad_api.load_upload_ids():
+        written.extend(
+            nomad_api.download_upload_archives(upload_id, staging_dir)
+        )
+    return written
+
+
+def load_synthesis_from_nomad(staging_dir: Path) -> dict[str, dict[str, Any]]:
+    """Fetch BaCuSe archives from the NOMAD API into staging, then extract them."""
+    fetch_nomad_archives_to_staging(staging_dir)
+    return load_synthesis_archives(staging_dir)

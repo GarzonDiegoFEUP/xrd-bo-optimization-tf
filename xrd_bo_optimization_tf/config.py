@@ -14,6 +14,10 @@ REFERENCES_DIR = DATA_DIR / "references"
 PROCESSED_DATA_DIR = DATA_DIR / "processed"
 RESULTS_DATA_DIR = DATA_DIR / "results"
 NOMAD_VOLUME_DIR = PROJECT_ROOT / ".volumes" / "fs" / "staging"
+# Local staging area for archives downloaded from the NOMAD REST API.
+NOMAD_STAGING_DIR = RAW_DATA_DIR / "nomad_staging"
+# Complete synthesis database extracted from the NOMAD API.
+NOMAD_SYNTHESIS_CSV = PROCESSED_DATA_DIR / "bacuse2_synthesis_database_nomad.csv"
 
 OUTPUTS_DIR = PROJECT_ROOT / "outputs"
 FIGURES_DIR = OUTPUTS_DIR / "figures"
@@ -38,7 +42,7 @@ REFERENCE_CARD_FILES = {
     "Cu2Se": "04-024-2128 Cu2Se.rtf",
     "BaSe": "96-900-8602 BaSe.rtf",
     "BaSeO4": "96-810-2887 BaSeO4.rtf",
-    "BaSeO3": "BaSeO3_XRD_Pattern_Reference-v2.rtf",
+    "BaSeO3": "00-053-0141 BaSeO3.rtf",
 }
 
 SYNTHESIS_CSV = PROCESSED_DATA_DIR / "bacuse2_synthesis_database_37samples.csv"

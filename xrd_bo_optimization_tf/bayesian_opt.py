@@ -11,14 +11,38 @@ from .config import (
     RESULTS_DATA_DIR,
 )
 
+# Selenium pulse knobs available for optimization (se_pulse_count is collinear
+# with selenization_time_s and is intentionally excluded).
+PULSE_PARAMETER_COLUMNS = ("se_pulse_on_ms", "se_pulse_off_ms")
+
 
 def prepare_optimization_data(
     metrics: pd.DataFrame,
     parameter_columns: tuple[str, ...] = BO_PARAMETER_COLUMNS,
+    synthesis: pd.DataFrame | None = None,
+    include_pulse: bool = False,
 ) -> pd.DataFrame:
-    """Filter incomplete rows and calculate the project's weighted objective."""
+    """Filter incomplete rows and calculate the project's weighted objective.
+
+    When include_pulse is True, pulse parameters are merged from the synthesis
+    table (keyed on sample_id) and appended to the optimization space.
+    """
+    parameters = tuple(parameter_columns)
+    if include_pulse:
+        if synthesis is None:
+            raise ValueError("include_pulse=True requires the synthesis table")
+        if "se_pulse_count" in parameters:
+            raise ValueError(
+                "se_pulse_count is collinear with selenization_time_s; exclude it"
+            )
+        pulse = synthesis[
+            ["sample_id", *PULSE_PARAMETER_COLUMNS]
+        ].drop_duplicates("sample_id")
+        metrics = metrics.merge(pulse, on="sample_id", how="left")
+        parameters = (*parameters, *PULSE_PARAMETER_COLUMNS)
+
     required = {
-        *parameter_columns,
+        *parameters,
         "sample_id",
         "crystallinity",
         "phase_purity",
@@ -27,7 +51,7 @@ def prepare_optimization_data(
     if missing:
         raise ValueError(f"Metrics table is missing required columns: {sorted(missing)}")
     prepared = metrics.dropna(
-        subset=[*parameter_columns, "crystallinity", "phase_purity"]
+        subset=[*parameters, "crystallinity", "phase_purity"]
     ).copy()
     if prepared.empty:
         raise ValueError("No complete rows are available for Bayesian optimization")
@@ -40,6 +64,8 @@ def prepare_optimization_data(
         PHASE_PURITY_WEIGHT * prepared["phase_purity"].astype(float)
         + CRYSTALLINITY_WEIGHT * prepared["crystallinity_norm"]
     )
+    # Record the optimization-space columns for downstream plotting/BO calls.
+    prepared.attrs["parameter_columns"] = parameters
     return prepared
 
 
@@ -47,9 +73,13 @@ def suggest_next_conditions(
     prepared: pd.DataFrame,
     n_suggestions: int = 5,
     random_state: int = 0,
-    parameter_columns: tuple[str, ...] = BO_PARAMETER_COLUMNS,
+    parameter_columns: tuple[str, ...] | None = None,
 ) -> pd.DataFrame:
     """Fit a Gaussian-process optimizer and return ranked next conditions."""
+    if parameter_columns is None:
+        parameter_columns = prepared.attrs.get(
+            "parameter_columns", BO_PARAMETER_COLUMNS
+        )
     if n_suggestions < 1:
         raise ValueError("n_suggestions must be at least 1")
     if len(prepared) < 2:

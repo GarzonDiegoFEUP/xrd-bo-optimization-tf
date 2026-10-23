@@ -1,0 +1,6 @@
+# NOMAD upload IDs for BaCuSe uploads (one per line).
+# Auto-discovered 2026-10-23 via uploads list (names containing BaCu/BCS/Cu2Se).
+# Lines starting with # are ignored. Format: <upload_id>  # optional comment
+mZdfUGtwRr-qtYuvxb0lfQ  # DOE for BaCu2Se2
+TBRSU9POTmKRrd1aytChkA  # 260721 - DOE BaCuSe - Temp and Se cycles
+csHzBMzSTu-jLd38eB_POg  # 260929 - BaCuSe diff thickness
