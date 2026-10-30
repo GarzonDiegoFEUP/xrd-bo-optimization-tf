@@ -57,7 +57,7 @@ strategies are provided:
 - `data/raw/` — local `.xrdml` backups; `data/raw/nomad_staging/` is a
   gitignored cache of NOMAD archives downloaded by notebook 1.
 - `data/references/` — ICDD reference cards (`.rtf`):
-  `01-080-2950 BaCu2Se2` (target), `04-024-2128 Cu2Se`, `00-053-0141 BaSeO3`,
+  `01-080-2950 BaCu2Se2` (target), `96-101-0582 Cu2Se` (α-Cu2Se), `00-053-0141 BaSeO3`,
   plus `96-900-8602 BaSe` and `96-810-2887 BaSeO4` (matched, not plotted).
 - `data/processed/` — synthesis tables and the BaCuSe upload-ID list
   (`bacuse_upload_ids.txt`).
