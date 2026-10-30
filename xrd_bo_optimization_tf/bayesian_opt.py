@@ -11,16 +11,18 @@ from .config import (
     CRYSTALLINITY_WEIGHT,
     PHASE_PURITY_WEIGHT,
     RESULTS_DATA_DIR,
-    SE_PULSE_PROFILE_COLUMN,
-    SE_PULSE_PROFILE_TO_TIMES,
-    SE_PULSE_PROFILE_VALUES,
+    SE_PULSE_DUTY_CYCLE_BOUNDS,
+    SE_PULSE_DUTY_CYCLE_COLUMN,
+    SE_PULSE_FREQUENCY_HZ,
+    SE_PULSE_ON_MS_BOUNDS,
+    SE_PULSE_PERIOD_MS,
     UNASSIGNED_AREA_PENALTY_LAMBDA,
     XRD_PARAMETER_COLUMNS,
 )
 
 # Selenium pulse knobs available for optimization (se_pulse_count is collinear
 # with selenization_time_s and is intentionally excluded).
-PULSE_PARAMETER_COLUMNS = (SE_PULSE_PROFILE_COLUMN,)
+PULSE_PARAMETER_COLUMNS = (SE_PULSE_DUTY_CYCLE_COLUMN,)
 
 # Process descriptors retained from the synthesis table for exploration.
 PROCESS_MERGE_COLUMNS = (
@@ -36,15 +38,19 @@ PROCESS_MERGE_COLUMNS = (
 PROCESS_BO_COLUMNS = ("cbc_ratio",)
 
 
-def _pulse_profile(on_ms: object, off_ms: object) -> str | None:
-    """Return the stable categorical label for a known on/off pulse pair."""
+def _pulse_duty_cycle(on_ms: object, off_ms: object) -> float | None:
+    """Validate a fixed-period pulse pair and return its duty cycle."""
     if pd.isna(on_ms) or pd.isna(off_ms):
         return None
-    pair = (int(round(float(on_ms))), int(round(float(off_ms))))
-    for label, known_pair in SE_PULSE_PROFILE_TO_TIMES.items():
-        if pair == known_pair:
-            return label
-    raise ValueError(f"Unknown selenium pulse timing pair: {pair}")
+    on_value, off_value = float(on_ms), float(off_ms)
+    if on_value <= 0 or off_value <= 0:
+        raise ValueError("Selenium pulse on/off times must both be positive")
+    period_ms = on_value + off_value
+    if not np.isclose(period_ms, SE_PULSE_PERIOD_MS, atol=1e-6):
+        raise ValueError(
+            f"Selenium pulse period must be {SE_PULSE_PERIOD_MS} ms; got {period_ms} ms"
+        )
+    return on_value / period_ms
 
 
 def _grid_values(spec: tuple[float, float, float, int]) -> list[float]:
@@ -71,8 +77,8 @@ def prepare_optimization_data(
     assignment. Without diagnostics, the base objective is used unchanged.
 
     When include_pulse / include_process is True, the synthesis table is merged
-    in (keyed on sample_id). Pulse on/off values become one validated
-    categorical profile, and CBC ratio is the only selected process input.
+    in (keyed on sample_id). Pulse on/off values become one continuous duty
+    cycle at a fixed period, and CBC ratio is the only other process input.
     """
     if not 0.0 <= unassigned_area_penalty_lambda <= 1.0:
         raise ValueError("unassigned_area_penalty_lambda must be between 0 and 1")
@@ -91,13 +97,15 @@ def prepare_optimization_data(
         metrics = metrics.merge(merged, on="sample_id", how="left")
         if include_pulse:
             if not {"se_pulse_on_ms", "se_pulse_off_ms"}.issubset(merged.columns):
-                raise ValueError("Pulse profiles require on/off timing columns in synthesis")
-            metrics[SE_PULSE_PROFILE_COLUMN] = [
-                _pulse_profile(on_ms, off_ms)
+                raise ValueError("Pulse timing requires on/off columns in synthesis")
+            metrics[SE_PULSE_DUTY_CYCLE_COLUMN] = [
+                _pulse_duty_cycle(on_ms, off_ms)
                 for on_ms, off_ms in zip(
                     metrics["se_pulse_on_ms"], metrics["se_pulse_off_ms"]
                 )
             ]
+            metrics["se_pulse_period_ms"] = SE_PULSE_PERIOD_MS
+            metrics["se_pulse_frequency_hz"] = SE_PULSE_FREQUENCY_HZ
             parameters = tuple(dict.fromkeys((*parameters, *PULSE_PARAMETER_COLUMNS)))
         if include_process:
             parameters = tuple(dict.fromkeys((*parameters, *PROCESS_BO_COLUMNS)))
@@ -208,16 +216,16 @@ def suggest_next_conditions(
         raise ValueError("Optimization data must include an objective column")
 
     from skopt import Optimizer
-    from skopt.space import Categorical
+    from skopt.space import Categorical, Real
 
     bounds = []
     for column in parameter_columns:
-        if column == SE_PULSE_PROFILE_COLUMN:
-            observed_profiles = set(prepared[column].dropna())
-            unknown_profiles = observed_profiles.difference(SE_PULSE_PROFILE_VALUES)
-            if unknown_profiles:
-                raise ValueError(f"Unknown pulse profiles: {sorted(unknown_profiles)}")
-            bounds.append(Categorical(list(SE_PULSE_PROFILE_VALUES), name=column))
+        if column == SE_PULSE_DUTY_CYCLE_COLUMN:
+            lower, upper = SE_PULSE_DUTY_CYCLE_BOUNDS
+            observed = prepared[column].astype(float)
+            if ((observed < lower) | (observed > upper)).any():
+                raise ValueError("Observed pulse duty cycle is outside configured bounds")
+            bounds.append(Real(lower, upper, name=column))
             continue
         if column in BO_PARAMETER_GRID_SPECS:
             values = _grid_values(BO_PARAMETER_GRID_SPECS[column])
@@ -237,6 +245,16 @@ def suggest_next_conditions(
     observed_objectives = (-prepared["objective"].astype(float)).tolist()
     optimizer.tell(observed_conditions, observed_objectives)
     suggestions = optimizer.ask(n_points=n_suggestions, strategy="cl_min")
+    if SE_PULSE_DUTY_CYCLE_COLUMN in parameter_columns:
+        duty_index = parameter_columns.index(SE_PULSE_DUTY_CYCLE_COLUMN)
+        for condition in suggestions:
+            on_ms = int(
+                np.clip(
+                    np.rint(condition[duty_index] * SE_PULSE_PERIOD_MS),
+                    *SE_PULSE_ON_MS_BOUNDS,
+                )
+            )
+            condition[duty_index] = on_ms / SE_PULSE_PERIOD_MS
     predicted_mean, predicted_std = optimizer.models[-1].predict(
         optimizer.space.transform(suggestions), return_std=True
     )
@@ -248,13 +266,14 @@ def suggest_next_conditions(
     penalty_lambda = prepared.attrs.get("objective_penalty_lambda")
     if penalty_lambda is not None:
         result.insert(1, "penalty_lambda", penalty_lambda)
-    if SE_PULSE_PROFILE_COLUMN in result:
-        result["se_pulse_on_ms"] = result[SE_PULSE_PROFILE_COLUMN].map(
-            lambda profile: SE_PULSE_PROFILE_TO_TIMES[profile][0]
-        )
-        result["se_pulse_off_ms"] = result[SE_PULSE_PROFILE_COLUMN].map(
-            lambda profile: SE_PULSE_PROFILE_TO_TIMES[profile][1]
-        )
+    if SE_PULSE_DUTY_CYCLE_COLUMN in result:
+        on_lower, on_upper = SE_PULSE_ON_MS_BOUNDS
+        on_ms = np.rint(result[SE_PULSE_DUTY_CYCLE_COLUMN] * SE_PULSE_PERIOD_MS)
+        on_ms = np.clip(on_ms, on_lower, on_upper).astype(int)
+        result["se_pulse_on_ms"] = on_ms
+        result["se_pulse_off_ms"] = SE_PULSE_PERIOD_MS - on_ms
+        result["se_pulse_period_ms"] = SE_PULSE_PERIOD_MS
+        result["se_pulse_frequency_hz"] = SE_PULSE_FREQUENCY_HZ
     return result
 
 

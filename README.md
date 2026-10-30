@@ -9,10 +9,13 @@ and crystallinity for each film, then uses a Gaussian-process Bayesian
 optimizer to suggest synthesis conditions that maximize a combined score.
 
 The optimization space has five inputs: hard-bake temperature, selenization
-temperature, selenization time, precursor Cu/(Ba+Cu) ratio (CBC), and one
-categorical Se pulse profile. The profile joins the on/off timings because the
-observed settings have a fixed 3200 ms period and exact inverse correlation;
-suggestions also report the corresponding on/off recipe values. Spin speed,
+temperature, selenization time, precursor Cu/(Ba+Cu) ratio (CBC), and continuous
+Se pulse duty cycle. Pulse on/off durations are derived from a fixed 3200 ms
+(3.2 s) period; frequency is therefore constant at 0.3125 Hz and is reported
+as metadata, not fitted as an optimizer dimension. Suggestions quantize the on
+time to 1 ms increments and report the resulting on/off recipe values. Only
+three duty-cycle levels are observed, so intermediate suggestions rely on an
+exploratory smooth-interpolation assumption. Spin speed,
 soft-bake temperature, spin-to-selenization gap, spin-cycle count, and Mo
 coating remain recorded descriptors, not optimizer inputs. The gap and coating
 effects need deliberate matched experiments before inclusion. Two optimization
@@ -23,13 +26,13 @@ strategies are provided:
   `A` is the unmatched/overlap detected-peak-area fraction. This fixed penalty
   is a provisional screening proxy, not a phase fraction or validated impurity
   metric; it does not identify the ~23° feature. The four numeric inputs are
-  restricted to the shared experimental recipe grids and the pulse profile is
-  categorical.
+  restricted to the shared experimental recipe grids and duty cycle is modeled
+  continuously over the observed timing bounds.
 - **Multi-objective** (notebook 4, Ax/BoTorch): maximize phase purity and
   normalized crystallinity separately, each multiplied by the same configured
   `(1 − 0.25 × A)` screening factor, and trace the Pareto front (qNEHVI).
   The same five inputs and numeric grids are used (including 25 °C hard-bake
-  steps), with the pulse profile as one categorical choice. This remains a Pareto formulation, not the same scalar
+  steps), with duty cycle as a continuous input. This remains a Pareto formulation, not the same scalar
   objective as notebook 3.
 
 ## Repository structure

@@ -27,7 +27,8 @@ from .config import (
     NOMAD_SYNTHESIS_CSV,
     REPORTS_DIR,
     RESULTS_DATA_DIR,
-    SE_PULSE_PROFILE_COLUMN,
+    SE_PULSE_DUTY_CYCLE_COLUMN,
+    SE_PULSE_FREQUENCY_HZ,
     UNASSIGNED_AREA_DIAGNOSTICS_CSV,
     UNASSIGNED_AREA_PENALTY_LAMBDA,
 )
@@ -90,7 +91,7 @@ def _suggestions_table(suggestions: pd.DataFrame, parameter_columns) -> KeepToge
         "selenization_temp_c": "Selen. temp<br/>°C",
         "selenization_time_s": "Selen. time<br/>s",
         "cbc_ratio": "CBC ratio",
-        SE_PULSE_PROFILE_COLUMN: "Se pulse<br/>profile",
+        SE_PULSE_DUTY_CYCLE_COLUMN: "Se duty<br/>cycle",
         "se_pulse_on_ms": "Se on<br/>ms",
         "se_pulse_off_ms": "Se off<br/>ms",
         "predicted_objective": "Predicted<br/>score",
@@ -108,6 +109,8 @@ def _suggestions_table(suggestions: pd.DataFrame, parameter_columns) -> KeepToge
                 entry.append(str(int(row[column])))
             elif column == "cbc_ratio":
                 entry.append(f"{row[column]:.3f}")
+            elif column == SE_PULSE_DUTY_CYCLE_COLUMN:
+                entry.append(f"{row[column]:.4f}")
             elif column in ("predicted_objective", "predicted_std"):
                 entry.append(f"{row[column]:.3f}")
             elif pd.api.types.is_number(row[column]):
@@ -121,7 +124,7 @@ def _suggestions_table(suggestions: pd.DataFrame, parameter_columns) -> KeepToge
         "selenization_temp_c": 48,
         "selenization_time_s": 48,
         "cbc_ratio": 43,
-        SE_PULSE_PROFILE_COLUMN: 78,
+        SE_PULSE_DUTY_CYCLE_COLUMN: 46,
         "se_pulse_on_ms": 38,
         "se_pulse_off_ms": 38,
         "predicted_objective": 50,
@@ -201,8 +204,12 @@ def build_report(output_path: Path | None = None) -> Path:
         f"recommend the next synthesis conditions, optimizing objective = "
         f"(0.7 × phase purity + 0.3 × normalized crystallinity) × "
         f"(1 − {UNASSIGNED_AREA_PENALTY_LAMBDA:.2f} × A) over a five-input space: hard-bake "
-        f"temperature, selenization temperature and time, Cu/(Ba+Cu) ratio, and one categorical Se pulse "
-        f"profile derived from on/off timings. CBC is defined as n<sub>Cu</sub>/(n<sub>Ba</sub>+n<sub>Cu</sub>); "
+        f"temperature, selenization temperature and time, Cu/(Ba+Cu) ratio, and continuous Se pulse duty "
+        f"cycle. The on+off period is fixed at 3200 ms (3.2 s), so pulse frequency is fixed at "
+        f"{SE_PULSE_FREQUENCY_HZ:.4f} Hz and is reported as metadata, not optimized. Intermediate duty "
+        f"cycles are model interpolations from three observed levels and should be treated as exploratory; "
+        f"recommended on-times are quantized to 1 ms increments. "
+        f"CBC is defined as n<sub>Cu</sub>/(n<sub>Ba</sub>+n<sub>Cu</sub>); "
         f"the candidate grid is {BO_PARAMETER_GRID_SPECS['cbc_ratio'][0]:.2f}–"
         f"{BO_PARAMETER_GRID_SPECS['cbc_ratio'][1]:.2f}, so a ratio of 1 (no Ba) is excluded. "
         f"A is the unmatched/overlap "
@@ -234,7 +241,8 @@ def build_report(output_path: Path | None = None) -> Path:
         f"purity {best['phase_purity']:.2f}, crystallinity {best['crystallinity']:.2f}, "
         f"A {best['unassigned_or_overlap_area_fraction']:.2f}). The optimizer uses the five selected "
         f"inputs only. Other process and substrate descriptors remain available for descriptive "
-        f"exploration; the pulse profile is categorical and is not treated as an ordinal correlation."
+        f"exploration; duty cycle is modeled continuously, with the fixed pulse frequency excluded "
+        f"from the optimizer because it has no observed variation."
     )
     story.append(Paragraph(results, styles["BodySmall"]))
     for name in ("bacuse2_bo_correlations.png", "bacuse2_bo_gp_surface.png"):
@@ -254,9 +262,9 @@ def build_report(output_path: Path | None = None) -> Path:
     story.append(Spacer(1, 0.2 * cm))
     top = suggestions.iloc[0]
     pulse_text = (
-        f"{top[SE_PULSE_PROFILE_COLUMN]} profile ({top['se_pulse_on_ms']:.0f} ms on / "
+        f"duty cycle {top[SE_PULSE_DUTY_CYCLE_COLUMN]:.4f} ({top['se_pulse_on_ms']:.0f} ms on / "
         f"{top['se_pulse_off_ms']:.0f} ms off)"
-        if SE_PULSE_PROFILE_COLUMN in suggestions.columns
+        if SE_PULSE_DUTY_CYCLE_COLUMN in suggestions.columns
         else ""
     )
     story.append(Paragraph(
@@ -282,9 +290,11 @@ def build_report(output_path: Path | None = None) -> Path:
             f"(1 − {UNASSIGNED_AREA_PENALTY_LAMBDA:.2f} × A) factor. Ax (BoTorch) fits a Gaussian "
             "process per metric and finds the Pareto front via qNEHVI hypervolume maximization. "
             "Its five candidate inputs match notebook 3: hard-bake temperature, selenization "
-            "temperature/time, CBC ratio, and a categorical joint pulse profile. Numeric recipes "
-            "use the same explicit experiment-scale grids, including 25 °C bake steps, and the "
-            "profile is reported with exact on/off timings. This remains a Pareto formulation, not the "
+            "temperature/time, CBC ratio, and continuous pulse duty cycle. Pulse period is fixed "
+            f"at 3.2 s ({SE_PULSE_FREQUENCY_HZ:.4f} Hz), so frequency is excluded as a constant. "
+            "Duty-cycle suggestions are quantized to 1 ms on-time increments; interpolation between "
+            "the three observed duty levels is exploratory. Numeric process recipes "
+            "use the same explicit experiment-scale grids, including 25 °C bake steps. This remains a Pareto formulation, not the "
             "same scalar objective as notebook 3. A is an exploratory detected-peak-area screening "
             "proxy, not a phase fraction or a confirmed assignment of the ~23° feature.",
             styles["BodySmall"],

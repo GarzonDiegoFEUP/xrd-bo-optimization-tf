@@ -14,8 +14,6 @@ from .config import (
     BO_PARAMETER_COLUMNS,
     FIGURES_DIR,
     REFERENCE_CARD_FILES,
-    SE_PULSE_PROFILE_COLUMN,
-    SE_PULSE_PROFILE_VALUES,
 )
 
 # Presentation-friendly defaults with a colorblind-safe palette.
@@ -142,17 +140,9 @@ def plot_parameter_metrics(
     )
     scatter = None
     for column_index, parameter in enumerate(parameter_columns):
-        is_profile = parameter == SE_PULSE_PROFILE_COLUMN
-        profile_positions = {label: index for index, label in enumerate(SE_PULSE_PROFILE_VALUES)}
-        observed_values = (
-            observed[parameter].map(profile_positions)
-            if is_profile
-            else observed[parameter]
-        )
+        observed_values = observed[parameter]
         suggestion_value = suggestions.loc[0, parameter]
-        suggestion_position = (
-            profile_positions[suggestion_value] if is_profile else suggestion_value
-        )
+        suggestion_position = suggestion_value
         for row_index, (metric, label) in enumerate(
             (
                 ("phase_purity", "phase purity"),
@@ -172,11 +162,7 @@ def plot_parameter_metrics(
             axis.axvline(suggestion_position, color="C3", linestyle="--")
             axis.grid(alpha=0.3)
             if row_index == 1:
-                axis.set_xlabel("Se pulse profile" if is_profile else parameter)
-                axis.tick_params(axis="x", rotation=30)
-                if is_profile:
-                    axis.set_xticks(range(len(SE_PULSE_PROFILE_VALUES)))
-                    axis.set_xticklabels(SE_PULSE_PROFILE_VALUES)
+                axis.set_xlabel(parameter)
             if column_index == 0:
                 axis.set_ylabel(label)
             if row_index == 0:
@@ -402,7 +388,7 @@ def plot_gp_surface(
     (defaults to the best observed row).
     """
     from skopt import Optimizer
-    from skopt.space import Categorical, Real
+    from skopt.space import Real
 
     parameter_names = list(prepared.attrs.get("parameter_columns", BO_PARAMETER_COLUMNS))
     if fixed is None:
@@ -413,16 +399,11 @@ def plot_gp_surface(
             if name not in (param_x, param_y)
         }
 
-    if param_x == SE_PULSE_PROFILE_COLUMN or param_y == SE_PULSE_PROFILE_COLUMN:
-        raise ValueError("GP surface axes must be numeric parameters, not pulse profile")
     bounds = []
     for name in parameter_names:
-        if name == SE_PULSE_PROFILE_COLUMN:
-            bounds.append(Categorical(list(SE_PULSE_PROFILE_VALUES), name=name))
-        else:
-            bounds.append(
-                Real(float(prepared[name].min()), float(prepared[name].max()), name=name)
-            )
+        bounds.append(
+            Real(float(prepared[name].min()), float(prepared[name].max()), name=name)
+        )
     optimizer = Optimizer(
         bounds, base_estimator="GP", acq_func="EI", random_state=random_state
     )
@@ -434,16 +415,8 @@ def plot_gp_surface(
 
     x_bound = bounds[parameter_names.index(param_x)]
     y_bound = bounds[parameter_names.index(param_y)]
-    x_values = (
-        np.asarray(x_bound.categories, dtype=float)
-        if isinstance(x_bound, Categorical)
-        else np.linspace(x_bound.low, x_bound.high, grid_points)
-    )
-    y_values = (
-        np.asarray(y_bound.categories, dtype=float)
-        if isinstance(y_bound, Categorical)
-        else np.linspace(y_bound.low, y_bound.high, grid_points)
-    )
+    x_values = np.linspace(x_bound.low, x_bound.high, grid_points)
+    y_values = np.linspace(y_bound.low, y_bound.high, grid_points)
     grid_x, grid_y = np.meshgrid(x_values, y_values)
     points = []
     for gx, gy in zip(grid_x.ravel(), grid_y.ravel()):
