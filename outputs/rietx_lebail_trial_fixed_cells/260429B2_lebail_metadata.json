@@ -1,0 +1,326 @@
+{
+  "sample_id": "260429B2",
+  "archive": "data/raw/nomad_staging/mZdfUGtwRr-qtYuvxb0lfQ/260429B2 BaCuSe GI02.archive.json",
+  "data_file": "260429B2 BaCuSe GI0.2.xrdml",
+  "measurement_geometry": "Grazing Incidence X-Ray Diffraction (GIXRD)",
+  "omega": [
+    0.2
+  ],
+  "source_peak_wavelength_A": 1.540598,
+  "kalpha_two_A": 1.544426,
+  "ratio_kalpha2_kalpha1": 0.5,
+  "point_count": 2500,
+  "two_theta_range_deg": [
+    10.01,
+    59.99
+  ],
+  "median_step_deg": 0.019999999999999574,
+  "geometry_used_by_rietx": "bragg_brentano",
+  "geometry_limitation": "rietx 1.10 has no fixed-incidence GIXRD geometry. The instrument uses flat-plate Bragg-Brentano reflection geometry as a profile-fitting proxy; interpret the fit and phase quantities as exploratory only.",
+  "fit_mode": "lebail",
+  "cell_parameters_refined": false,
+  "fit_statistics": {
+    "rwp": 0.18226120619890152,
+    "rp": 0.1340362546744059,
+    "rexp": 0.14079572987060945,
+    "chi2": 1.6757511002635175,
+    "gof": 1.2945080533791657,
+    "rwp_background_subtracted": 0.40589289059620043,
+    "durbin_watson": 1.6966269804671175,
+    "esd_inflation": 1.4723956166428975,
+    "n_points": 2500,
+    "n_free_parameters": 12,
+    "max_shift_over_esd": 8.269104926714959e-05,
+    "identifiability_clause": null
+  },
+  "target_weak_reflection_check": {
+    "reference_two_theta_deg": 22.637,
+    "window_deg": [
+      22.137,
+      23.137
+    ],
+    "observed_peak_two_theta_deg": 22.869999999999997,
+    "observed_window_max_counts": 266.0,
+    "calculated_peak_two_theta_deg": 23.009999999999998,
+    "calculated_window_max_counts": 228.40105808186328,
+    "window_residual_rmse_counts": 19.322609042807873,
+    "window_point_count": 50
+  },
+  "selected_fitted_parameters": {
+    "instrument.zero_shift": {
+      "value": 0.04377812760128635,
+      "stderr": 0.008070785037511536,
+      "vary": true
+    },
+    "instrument.profile.u": {
+      "value": 8.838161194344492,
+      "stderr": 2.9809772114596673,
+      "vary": true
+    },
+    "instrument.profile.v": {
+      "value": -5.028004993316365,
+      "stderr": 1.7740185796330998,
+      "vary": true
+    },
+    "instrument.profile.w": {
+      "value": 0.9773411479671423,
+      "stderr": 0.28913297895793144,
+      "vary": true
+    },
+    "instrument.profile.x": {
+      "value": 0.41414557397459495,
+      "stderr": 0.1602921639214898,
+      "vary": true
+    },
+    "instrument.profile.y": {
+      "value": -0.8202677008318766,
+      "stderr": 0.6406381510650249,
+      "vary": true
+    }
+  },
+  "fit_plot": "outputs/rietx_lebail_trial_fixed_cells/260429B2_multiphase_lebail_fit.png",
+  "target_reflection_zoom_plot": "outputs/rietx_lebail_trial_fixed_cells/260429B2_22p637deg_peak_zoom.png",
+  "stages": [
+    {
+      "name": "bkg",
+      "status": "converged",
+      "n_iterations": 2,
+      "cost_initial": 77626.75235789087,
+      "cost_final": 75332.00657874448,
+      "freed": [
+        "instrument.background.c0",
+        "instrument.background.c1",
+        "instrument.background.c2",
+        "instrument.background.c3",
+        "instrument.background.c4",
+        "instrument.background.c5"
+      ],
+      "ftol": 1e-06,
+      "window_area_tol": null,
+      "n_constraint_truncations": 0,
+      "n_degenerate_cell_probes": 0,
+      "n_lapack_fallbacks": 0,
+      "held": [],
+      "held_reach": {},
+      "scale_b_held": {},
+      "width_twins_held": {},
+      "released": [],
+      "moment_flat_axes": {},
+      "moment_turned": [],
+      "blocked_by_hold": [],
+      "unknown_paths": [],
+      "unreached_histograms": {},
+      "seeded": {},
+      "moment_angle_tests": null,
+      "cell_reset": [],
+      "collapsed": []
+    },
+    {
+      "name": "zero",
+      "status": "converged",
+      "n_iterations": 53,
+      "cost_initial": 57512.86726269191,
+      "cost_final": 55713.43374161459,
+      "freed": [
+        "instrument.zero_shift"
+      ],
+      "ftol": 1e-06,
+      "window_area_tol": null,
+      "n_constraint_truncations": 0,
+      "n_degenerate_cell_probes": 0,
+      "n_lapack_fallbacks": 0,
+      "held": [],
+      "held_reach": {},
+      "scale_b_held": {},
+      "width_twins_held": {},
+      "released": [],
+      "moment_flat_axes": {},
+      "moment_turned": [],
+      "blocked_by_hold": [],
+      "unknown_paths": [],
+      "unreached_histograms": {},
+      "seeded": {},
+      "moment_angle_tests": null,
+      "cell_reset": [],
+      "collapsed": []
+    },
+    {
+      "name": "profile_w",
+      "status": "converged",
+      "n_iterations": 22,
+      "cost_initial": 48869.86052951088,
+      "cost_final": 2818.075865093567,
+      "freed": [
+        "instrument.profile.w"
+      ],
+      "ftol": 1e-06,
+      "window_area_tol": null,
+      "n_constraint_truncations": 0,
+      "n_degenerate_cell_probes": 0,
+      "n_lapack_fallbacks": 0,
+      "held": [],
+      "held_reach": {},
+      "scale_b_held": {},
+      "width_twins_held": {},
+      "released": [],
+      "moment_flat_axes": {},
+      "moment_turned": [],
+      "blocked_by_hold": [],
+      "unknown_paths": [],
+      "unreached_histograms": {},
+      "seeded": {},
+      "moment_angle_tests": null,
+      "cell_reset": [],
+      "collapsed": []
+    },
+    {
+      "name": "profile",
+      "status": "converged",
+      "n_iterations": 12,
+      "cost_initial": 2140.623256904725,
+      "cost_final": 2003.2235269814707,
+      "freed": [
+        "instrument.profile.u",
+        "instrument.profile.v",
+        "instrument.profile.x",
+        "instrument.profile.y"
+      ],
+      "ftol": 1e-06,
+      "window_area_tol": null,
+      "n_constraint_truncations": 11,
+      "n_degenerate_cell_probes": 0,
+      "n_lapack_fallbacks": 0,
+      "held": [],
+      "held_reach": {},
+      "scale_b_held": {},
+      "width_twins_held": {},
+      "released": [],
+      "moment_flat_axes": {},
+      "moment_turned": [],
+      "blocked_by_hold": [],
+      "unknown_paths": [],
+      "unreached_histograms": {},
+      "seeded": {},
+      "moment_angle_tests": null,
+      "cell_reset": [],
+      "collapsed": []
+    },
+    {
+      "name": "closing",
+      "status": "converged",
+      "n_iterations": 13,
+      "cost_initial": 2093.484583021668,
+      "cost_final": 1977.6289286587187,
+      "freed": [
+        "instrument.zero_shift",
+        "instrument.profile.u",
+        "instrument.profile.v",
+        "instrument.profile.w",
+        "instrument.profile.x",
+        "instrument.profile.y",
+        "instrument.background.c0",
+        "instrument.background.c1",
+        "instrument.background.c2",
+        "instrument.background.c3",
+        "instrument.background.c4",
+        "instrument.background.c5"
+      ],
+      "ftol": null,
+      "window_area_tol": 0.001,
+      "n_constraint_truncations": 12,
+      "n_degenerate_cell_probes": 0,
+      "n_lapack_fallbacks": 0,
+      "held": [],
+      "held_reach": {},
+      "scale_b_held": {},
+      "width_twins_held": {},
+      "released": [],
+      "moment_flat_axes": {},
+      "moment_turned": [],
+      "blocked_by_hold": [],
+      "unknown_paths": [],
+      "unreached_histograms": {},
+      "seeded": {},
+      "moment_angle_tests": null,
+      "cell_reset": [],
+      "collapsed": []
+    }
+  ],
+  "diagnostics": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 12 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 12; instrument.profile Lorentzian (phases.1): 12; instrument.profile Lorentzian (phases.2): 12; instrument.profile Lorentzian (phases.3): 12; instrument.profile Lorentzian (phases.4): 12) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "PEAK_WIDTH_LAW_MISMATCH",
+      "message": "The measured FWHM of 0.0708\u00b0 (median of the 12 most prominent lines) differs by a factor of 0.1 from the 0.6381\u00b0 that the fitted widths of phase 0 (BaCu2Se2, the closest of the model's phases) give.",
+      "where": [
+        "phases.0",
+        "instrument.profile"
+      ],
+      "suggestion": "Read SIZE_UNUSUALLY_SMALL, STRAIN_UNUSUALLY_LARGE and BOUND_HIT for a width term that ran away, then check that instrument.profile is not broader than this diffractometer.",
+      "value": 0.1108970899514678
+    },
+    {
+      "level": "warning",
+      "code": "PATTERN_UNDERSAMPLED",
+      "message": "The median fitted peak spans 1.3 steps across its FWHM (7 peaks), below the 5 the guidelines ask for.",
+      "where": [],
+      "suggestion": "Re-collect at a step near FWHM/5 if the intensities must be quotable.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 18.226, 18.331).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.18226120619890152
+    }
+  ],
+  "cif_diagnostics": [],
+  "phase_names": [
+    "BaCu2Se2",
+    "Cu2Se",
+    "BaSe",
+    "BaSeO3",
+    "BaSeO4"
+  ],
+  "weight_fractions_reported": false
+}

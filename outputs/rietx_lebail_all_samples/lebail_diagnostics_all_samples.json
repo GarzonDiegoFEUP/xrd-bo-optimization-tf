@@ -1,0 +1,1548 @@
+{
+  "260429A11": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 10 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 10; instrument.profile Lorentzian (phases.1): 10; instrument.profile Lorentzian (phases.2): 10; instrument.profile Lorentzian (phases.3): 10; instrument.profile Lorentzian (phases.4): 10) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "PEAK_WIDTH_LAW_MISMATCH",
+      "message": "The measured FWHM of 0.0313\u00b0 (median of the 12 most prominent lines) differs by a factor of 0.0 from the 0.6897\u00b0 that the fitted widths of phase 0 (\u03b1-BaCu\u2082Se\u2082, the closest of the model's phases) give.",
+      "where": [
+        "phases.0",
+        "instrument.profile"
+      ],
+      "suggestion": "Read SIZE_UNUSUALLY_SMALL, STRAIN_UNUSUALLY_LARGE and BOUND_HIT for a width term that ran away, then check that instrument.profile is not broader than this diffractometer.",
+      "value": 0.04541728653184893
+    },
+    {
+      "level": "warning",
+      "code": "PATTERN_UNDERSAMPLED",
+      "message": "The median fitted peak spans 2.4 steps across its FWHM (9 peaks), below the 5 the guidelines ask for.",
+      "where": [],
+      "suggestion": "Re-collect at a step near FWHM/5 if the intensities must be quotable.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 19.250, 19.410).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.19250255159545263
+    }
+  ],
+  "260429A12": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "warning",
+      "code": "HIGH_CORRELATION",
+      "message": "Correlated pair: instrument.profile.x ~ instrument.profile.y (\u03c1=-0.993). Flagged in stages: profile, closing.",
+      "where": [
+        "instrument.profile.x",
+        "instrument.profile.y"
+      ],
+      "suggestion": "Fix one of the two at a known value, or free them in separate stages.",
+      "value": -0.9932732007788169
+    },
+    {
+      "level": "warning",
+      "code": "HIGH_CORRELATION",
+      "message": "Correlated pair: instrument.profile.v ~ instrument.profile.w (\u03c1=-0.992). Flagged in stages: profile, closing.",
+      "where": [
+        "instrument.profile.v",
+        "instrument.profile.w"
+      ],
+      "suggestion": "Fix one of the two at a known value, or free them in separate stages.",
+      "value": -0.9918766626222372
+    },
+    {
+      "level": "warning",
+      "code": "HIGH_CORRELATION",
+      "message": "Correlated pair: instrument.profile.u ~ instrument.profile.v (\u03c1=-0.991). Flagged in stages: profile, closing.",
+      "where": [
+        "instrument.profile.u",
+        "instrument.profile.v"
+      ],
+      "suggestion": "Fix one of the two at a known value, or free them in separate stages.",
+      "value": -0.9905661968089076
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 22 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 22; instrument.profile Lorentzian (phases.1): 19; instrument.profile Lorentzian (phases.2): 22; instrument.profile Lorentzian (phases.3): 22; instrument.profile Lorentzian (phases.4): 22) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 19.940, 20.222).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.1993968602087642
+    }
+  ],
+  "260429A2": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 17 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 17; instrument.profile Lorentzian (phases.1): 17; instrument.profile Lorentzian (phases.2): 17; instrument.profile Lorentzian (phases.3): 17; instrument.profile Lorentzian (phases.4): 17) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "PEAK_WIDTH_LAW_MISMATCH",
+      "message": "The measured FWHM of 0.0305\u00b0 (median of the 12 most prominent lines) differs by a factor of 0.0 from the 0.8204\u00b0 that the fitted widths of phase 0 (\u03b1-BaCu\u2082Se\u2082, the closest of the model's phases) give.",
+      "where": [
+        "phases.0",
+        "instrument.profile"
+      ],
+      "suggestion": "Read SIZE_UNUSUALLY_SMALL, STRAIN_UNUSUALLY_LARGE and BOUND_HIT for a width term that ran away, then check that instrument.profile is not broader than this diffractometer.",
+      "value": 0.03720911718144018
+    },
+    {
+      "level": "warning",
+      "code": "PATTERN_UNDERSAMPLED",
+      "message": "The median fitted peak spans 1.3 steps across its FWHM (4 peaks), below the 5 the guidelines ask for.",
+      "where": [],
+      "suggestion": "Re-collect at a step near FWHM/5 if the intensities must be quotable.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 16.014, 16.114).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.16014137550181443
+    }
+  ],
+  "260429A3": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 13 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 13; instrument.profile Lorentzian (phases.1): 13; instrument.profile Lorentzian (phases.2): 13; instrument.profile Lorentzian (phases.3): 13; instrument.profile Lorentzian (phases.4): 13) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 16.336, 16.457).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.16336477709661643
+    }
+  ],
+  "260429B1": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 10 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 10; instrument.profile Lorentzian (phases.1): 10; instrument.profile Lorentzian (phases.2): 10; instrument.profile Lorentzian (phases.3): 10; instrument.profile Lorentzian (phases.4): 10) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "PEAK_WIDTH_LAW_MISMATCH",
+      "message": "The measured FWHM of 0.0329\u00b0 (median of the 12 most prominent lines) differs by a factor of 0.1 from the 0.5547\u00b0 that the fitted widths of phase 0 (\u03b1-BaCu\u2082Se\u2082, the closest of the model's phases) give.",
+      "where": [
+        "phases.0",
+        "instrument.profile"
+      ],
+      "suggestion": "Read SIZE_UNUSUALLY_SMALL, STRAIN_UNUSUALLY_LARGE and BOUND_HIT for a width term that ran away, then check that instrument.profile is not broader than this diffractometer.",
+      "value": 0.059371996619349575
+    },
+    {
+      "level": "warning",
+      "code": "PATTERN_UNDERSAMPLED",
+      "message": "The median fitted peak spans 1.2 steps across its FWHM (11 peaks), below the 5 the guidelines ask for.",
+      "where": [],
+      "suggestion": "Re-collect at a step near FWHM/5 if the intensities must be quotable.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 18.893, 19.136).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.18893047653371875
+    }
+  ],
+  "260429B2": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 12 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 12; instrument.profile Lorentzian (phases.1): 12; instrument.profile Lorentzian (phases.2): 12; instrument.profile Lorentzian (phases.3): 12; instrument.profile Lorentzian (phases.4): 12) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "PEAK_WIDTH_LAW_MISMATCH",
+      "message": "The measured FWHM of 0.0708\u00b0 (median of the 12 most prominent lines) differs by a factor of 0.1 from the 0.6381\u00b0 that the fitted widths of phase 0 (\u03b1-BaCu\u2082Se\u2082, the closest of the model's phases) give.",
+      "where": [
+        "phases.0",
+        "instrument.profile"
+      ],
+      "suggestion": "Read SIZE_UNUSUALLY_SMALL, STRAIN_UNUSUALLY_LARGE and BOUND_HIT for a width term that ran away, then check that instrument.profile is not broader than this diffractometer.",
+      "value": 0.1108970899514678
+    },
+    {
+      "level": "warning",
+      "code": "PATTERN_UNDERSAMPLED",
+      "message": "The median fitted peak spans 1.3 steps across its FWHM (7 peaks), below the 5 the guidelines ask for.",
+      "where": [],
+      "suggestion": "Re-collect at a step near FWHM/5 if the intensities must be quotable.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 18.226, 18.331).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.18226120619890152
+    }
+  ],
+  "260429B3": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 10 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 10; instrument.profile Lorentzian (phases.1): 10; instrument.profile Lorentzian (phases.2): 10; instrument.profile Lorentzian (phases.3): 10; instrument.profile Lorentzian (phases.4): 10) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 17.558, 17.884).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.17557690355847497
+    }
+  ],
+  "260429C1": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 11 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 11; instrument.profile Lorentzian (phases.1): 11; instrument.profile Lorentzian (phases.2): 11; instrument.profile Lorentzian (phases.3): 11; instrument.profile Lorentzian (phases.4): 11) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 17.933, 18.473).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.17933083063005967
+    }
+  ],
+  "260429C2": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 13 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 13; instrument.profile Lorentzian (phases.1): 13; instrument.profile Lorentzian (phases.2): 13; instrument.profile Lorentzian (phases.3): 13; instrument.profile Lorentzian (phases.4): 13) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 18.614, 18.783).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.18614143695048233
+    }
+  ],
+  "260429C3": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "warning",
+      "code": "RESOLUTION_NOT_POSITIVE",
+      "message": "The Caglioti resolution function (27 of 2500 fitted points, worst \u0393_G\u00b2 -1.77e-02 deg\u00b2 at 23.410\u00b0 2\u03b8) goes negative inside the fitted range.",
+      "where": [
+        "instrument.profile.u",
+        "instrument.profile.v",
+        "instrument.profile.w"
+      ],
+      "suggestion": "Refit the resolution on a standard with its certified cell held fixed (lab_calibrate), or hold a loaded instrument profile instead of refining its widths on this pattern. Do not report the widths, or the microstructure derived from them.",
+      "value": -0.017733411561806633
+    },
+    {
+      "level": "warning",
+      "code": "HIGH_CORRELATION",
+      "message": "Correlated pair: instrument.profile.x ~ instrument.profile.y (\u03c1=-1.000). Flagged in stages: profile, closing.",
+      "where": [
+        "instrument.profile.x",
+        "instrument.profile.y"
+      ],
+      "suggestion": "Fix one of the two at a known value, or free them in separate stages.",
+      "value": -0.9997222061572463
+    },
+    {
+      "level": "warning",
+      "code": "FLAT_DIRECTION",
+      "message": "Flat direction: instrument.profile.x ~ instrument.profile.y (\u03c1=-1.000; the data does not separate them).",
+      "where": [
+        "instrument.profile.x",
+        "instrument.profile.y"
+      ],
+      "suggestion": "Fix one at an independently known value and refine the other, or free them in different stages, and say in the result which one was held. Do not quote either as measured from this fit.",
+      "value": -0.9997222061572463
+    },
+    {
+      "level": "warning",
+      "code": "HIGH_CORRELATION",
+      "message": "Correlated pair: instrument.profile.v ~ instrument.profile.w (\u03c1=-0.998).",
+      "where": [
+        "instrument.profile.v",
+        "instrument.profile.w"
+      ],
+      "suggestion": "Fix one of the two at a known value, or free them in separate stages.",
+      "value": -0.9979896553542116
+    },
+    {
+      "level": "warning",
+      "code": "HIGH_CORRELATION",
+      "message": "Correlated pair: instrument.profile.u ~ instrument.profile.v (\u03c1=-0.998).",
+      "where": [
+        "instrument.profile.u",
+        "instrument.profile.v"
+      ],
+      "suggestion": "Fix one of the two at a known value, or free them in separate stages.",
+      "value": -0.9979114287527171
+    },
+    {
+      "level": "warning",
+      "code": "HIGH_CORRELATION",
+      "message": "Correlated pair: instrument.profile.u ~ instrument.profile.w (\u03c1=+0.992).",
+      "where": [
+        "instrument.profile.u",
+        "instrument.profile.w"
+      ],
+      "suggestion": "Fix one of the two at a known value, or free them in separate stages.",
+      "value": 0.9918126586228249
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 797 step(s) on a linear inequality constraint (instrument.profile (phases.2): 785; instrument.profile (phases.4): 1; instrument.profile Lorentzian (phases.0): 775; instrument.profile Lorentzian (phases.1): 207; instrument.profile Lorentzian (phases.2): 782; instrument.profile Lorentzian (phases.3): 398; instrument.profile Lorentzian (phases.4): 785) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "PEAK_WIDTH_LAW_MISMATCH",
+      "message": "The measured FWHM of 0.0215\u00b0 (median of the 12 most prominent lines) differs by a factor of 0.0 from the 4.7239\u00b0 that the fitted widths of phase 0 (\u03b1-BaCu\u2082Se\u2082, the closest of the model's phases) give.",
+      "where": [
+        "phases.0",
+        "instrument.profile"
+      ],
+      "suggestion": "Read SIZE_UNUSUALLY_SMALL, STRAIN_UNUSUALLY_LARGE and BOUND_HIT for a width term that ran away, then check that instrument.profile is not broader than this diffractometer.",
+      "value": 0.0045471110119596325
+    },
+    {
+      "level": "warning",
+      "code": "STAGE_MAX_ITER",
+      "message": "Stage 'closing' stopped on its iteration budget.",
+      "where": [],
+      "suggestion": "Free fewer parameters at once, or check the diagnostics for a correlation or bound hit in the same stage.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "PATTERN_UNDERSAMPLED",
+      "message": "The median fitted peak spans 3.4 steps across its FWHM (4 peaks), below the 5 the guidelines ask for.",
+      "where": [],
+      "suggestion": "Re-collect at a step near FWHM/5 if the intensities must be quotable.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 2 of 3 was kept (Rwp % per pass: 20.820, 20.393, 20.540).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.20393220240118645
+    }
+  ],
+  "260721D1": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 11 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 11; instrument.profile Lorentzian (phases.1): 11; instrument.profile Lorentzian (phases.2): 11; instrument.profile Lorentzian (phases.3): 11; instrument.profile Lorentzian (phases.4): 11) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 19.409, 19.847).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.1940866726148898
+    }
+  ],
+  "260721D11": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "warning",
+      "code": "HIGH_CORRELATION",
+      "message": "Correlated pair: instrument.profile.x ~ instrument.profile.y (\u03c1=-0.983). Flagged in stages: profile, closing.",
+      "where": [
+        "instrument.profile.x",
+        "instrument.profile.y"
+      ],
+      "suggestion": "Fix one of the two at a known value, or free them in separate stages.",
+      "value": -0.9831266221248806
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 13 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 13; instrument.profile Lorentzian (phases.1): 11; instrument.profile Lorentzian (phases.2): 13; instrument.profile Lorentzian (phases.3): 13; instrument.profile Lorentzian (phases.4): 13) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 16.928, 17.438).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.1692776951192394
+    }
+  ],
+  "260721D2": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 12 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 12; instrument.profile Lorentzian (phases.1): 12; instrument.profile Lorentzian (phases.2): 12; instrument.profile Lorentzian (phases.3): 12; instrument.profile Lorentzian (phases.4): 12) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 17.879, 18.207).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.17879290802141878
+    }
+  ],
+  "260721D3": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "warning",
+      "code": "HIGH_CORRELATION",
+      "message": "Correlated pair: instrument.profile.x ~ instrument.profile.y (\u03c1=-0.981). Flagged in stages: profile, closing.",
+      "where": [
+        "instrument.profile.x",
+        "instrument.profile.y"
+      ],
+      "suggestion": "Fix one of the two at a known value, or free them in separate stages.",
+      "value": -0.9807248601042509
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 21 step(s) on a linear inequality constraint (instrument.profile (phases.0): 1; instrument.profile (phases.1): 1; instrument.profile (phases.3): 1; instrument.profile (phases.4): 1; instrument.profile Lorentzian (phases.0): 21; instrument.profile Lorentzian (phases.1): 14; instrument.profile Lorentzian (phases.2): 21; instrument.profile Lorentzian (phases.3): 21; instrument.profile Lorentzian (phases.4): 21) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "PEAK_WIDTH_LAW_MISMATCH",
+      "message": "The measured FWHM of 0.2138\u00b0 (median of the 12 most prominent lines) differs by a factor of 0.3 from the 0.6602\u00b0 that the fitted widths of phase 0 (\u03b1-BaCu\u2082Se\u2082, the closest of the model's phases) give.",
+      "where": [
+        "phases.0",
+        "instrument.profile"
+      ],
+      "suggestion": "Read SIZE_UNUSUALLY_SMALL, STRAIN_UNUSUALLY_LARGE and BOUND_HIT for a width term that ran away, then check that instrument.profile is not broader than this diffractometer.",
+      "value": 0.3238433456513495
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 2 of 3 was kept (Rwp % per pass: 20.029, 19.976, 20.556).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.1997592179694977
+    }
+  ],
+  "260721D4": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 9 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 9; instrument.profile Lorentzian (phases.1): 8; instrument.profile Lorentzian (phases.2): 9; instrument.profile Lorentzian (phases.3): 9; instrument.profile Lorentzian (phases.4): 9) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "PEAK_WIDTH_LAW_MISMATCH",
+      "message": "The measured FWHM of 0.0219\u00b0 (median of the 12 most prominent lines) differs by a factor of 0.0 from the 0.6247\u00b0 that the fitted widths of phase 0 (\u03b1-BaCu\u2082Se\u2082, the closest of the model's phases) give.",
+      "where": [
+        "phases.0",
+        "instrument.profile"
+      ],
+      "suggestion": "Read SIZE_UNUSUALLY_SMALL, STRAIN_UNUSUALLY_LARGE and BOUND_HIT for a width term that ran away, then check that instrument.profile is not broader than this diffractometer.",
+      "value": 0.0350728420964652
+    },
+    {
+      "level": "warning",
+      "code": "PATTERN_UNDERSAMPLED",
+      "message": "The median fitted peak spans 1.1 steps across its FWHM (11 peaks), below the 5 the guidelines ask for.",
+      "where": [],
+      "suggestion": "Re-collect at a step near FWHM/5 if the intensities must be quotable.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 20.783, 21.014).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.20783462205472436
+    }
+  ],
+  "260721D5": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 10 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 10; instrument.profile Lorentzian (phases.1): 10; instrument.profile Lorentzian (phases.2): 10; instrument.profile Lorentzian (phases.3): 10; instrument.profile Lorentzian (phases.4): 10) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 17.641, 17.924).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.1764052197336473
+    }
+  ],
+  "260721D6": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 12 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 12; instrument.profile Lorentzian (phases.1): 12; instrument.profile Lorentzian (phases.2): 12; instrument.profile Lorentzian (phases.3): 12; instrument.profile Lorentzian (phases.4): 12) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 20.426, 21.154).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.2042588121590997
+    }
+  ],
+  "260901B1": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "warning",
+      "code": "HIGH_CORRELATION",
+      "message": "Correlated pair: instrument.profile.x ~ instrument.profile.y (\u03c1=-0.989). Flagged in stages: profile, closing.",
+      "where": [
+        "instrument.profile.x",
+        "instrument.profile.y"
+      ],
+      "suggestion": "Fix one of the two at a known value, or free them in separate stages.",
+      "value": -0.9889275211564291
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 14 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 14; instrument.profile Lorentzian (phases.1): 14; instrument.profile Lorentzian (phases.2): 14; instrument.profile Lorentzian (phases.3): 14; instrument.profile Lorentzian (phases.4): 14) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 18.397, 18.604).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.1839729829089329
+    }
+  ],
+  "260901B2": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 15 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 15; instrument.profile Lorentzian (phases.1): 13; instrument.profile Lorentzian (phases.2): 15; instrument.profile Lorentzian (phases.3): 15; instrument.profile Lorentzian (phases.4): 15) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 19.020, 19.191).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.19019801803371456
+    }
+  ],
+  "260901B4": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "warning",
+      "code": "HIGH_CORRELATION",
+      "message": "Correlated pair: instrument.profile.u ~ instrument.profile.v (\u03c1=-0.981).",
+      "where": [
+        "instrument.profile.u",
+        "instrument.profile.v"
+      ],
+      "suggestion": "Fix one of the two at a known value, or free them in separate stages.",
+      "value": -0.9810328390787123
+    },
+    {
+      "level": "warning",
+      "code": "HIGH_CORRELATION",
+      "message": "Correlated pair: instrument.profile.v ~ instrument.profile.w (\u03c1=-0.981).",
+      "where": [
+        "instrument.profile.v",
+        "instrument.profile.w"
+      ],
+      "suggestion": "Fix one of the two at a known value, or free them in separate stages.",
+      "value": -0.9807993735525687
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 15 step(s) on a linear inequality constraint (instrument.profile (phases.0): 1; instrument.profile (phases.3): 1; instrument.profile (phases.4): 1; instrument.profile Lorentzian (phases.0): 15; instrument.profile Lorentzian (phases.1): 15; instrument.profile Lorentzian (phases.2): 15; instrument.profile Lorentzian (phases.3): 15; instrument.profile Lorentzian (phases.4): 15) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 19.054, 19.973).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.1905374857690885
+    }
+  ],
+  "260901B5": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "warning",
+      "code": "HIGH_CORRELATION",
+      "message": "Correlated pair: instrument.profile.x ~ instrument.profile.y (\u03c1=-0.982). Flagged in stages: profile, closing.",
+      "where": [
+        "instrument.profile.x",
+        "instrument.profile.y"
+      ],
+      "suggestion": "Fix one of the two at a known value, or free them in separate stages.",
+      "value": -0.9815474638545085
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 14 step(s) on a linear inequality constraint (instrument.profile (phases.0): 10; instrument.profile (phases.2): 9; instrument.profile (phases.3): 10; instrument.profile (phases.4): 10; instrument.profile Lorentzian (phases.0): 14; instrument.profile Lorentzian (phases.1): 14; instrument.profile Lorentzian (phases.2): 14; instrument.profile Lorentzian (phases.3): 14; instrument.profile Lorentzian (phases.4): 14) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 19.510, 19.832).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.1950967834293741
+    }
+  ],
+  "260908B6": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 11 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 11; instrument.profile Lorentzian (phases.1): 10; instrument.profile Lorentzian (phases.2): 11; instrument.profile Lorentzian (phases.3): 11; instrument.profile Lorentzian (phases.4): 11) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 20.541, 21.158).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.20541011762744316
+    }
+  ],
+  "260929A1": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 14 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 14; instrument.profile Lorentzian (phases.1): 14; instrument.profile Lorentzian (phases.2): 14; instrument.profile Lorentzian (phases.3): 14; instrument.profile Lorentzian (phases.4): 14) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 18.838, 19.137).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.18838407986665243
+    }
+  ],
+  "260929A2": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "warning",
+      "code": "HIGH_CORRELATION",
+      "message": "Correlated pair: instrument.profile.x ~ instrument.profile.y (\u03c1=-0.984). Flagged in stages: profile, closing.",
+      "where": [
+        "instrument.profile.x",
+        "instrument.profile.y"
+      ],
+      "suggestion": "Fix one of the two at a known value, or free them in separate stages.",
+      "value": -0.9836217442818772
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 14 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 14; instrument.profile Lorentzian (phases.1): 14; instrument.profile Lorentzian (phases.2): 14; instrument.profile Lorentzian (phases.3): 14; instrument.profile Lorentzian (phases.4): 14) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 20.080, 20.560).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.20079963769004155
+    }
+  ],
+  "260929A3": [
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se2-' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 36 (-5.6%).",
+      "where": [
+        "phases.2.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": -0.05579322222222219
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se4+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 30 (+13.3%).",
+      "where": [
+        "phases.3.atoms.2.species",
+        "phases.3.atoms.3.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.13304813333333337
+    },
+    {
+      "level": "warning",
+      "code": "SPECIES_FALLBACK_NEUTRAL",
+      "message": "'Se6+' is absent from the Waasmaier-Kirfel table and was scattered as neutral Se, with 33.99 electrons against the ion's 28 (+21.4%).",
+      "where": [
+        "phases.4.atoms.1.species"
+      ],
+      "suggestion": "Accept neutral Se as the model, or substitute a tabulated ion of the same element with a nearby charge as a deliberate approximation.",
+      "value": 0.2139801428571429
+    },
+    {
+      "level": "warning",
+      "code": "HIGH_CORRELATION",
+      "message": "Correlated pair: instrument.profile.x ~ instrument.profile.y (\u03c1=-0.982). Flagged in stages: profile, closing.",
+      "where": [
+        "instrument.profile.x",
+        "instrument.profile.y"
+      ],
+      "suggestion": "Fix one of the two at a known value, or free them in separate stages.",
+      "value": -0.9820136161276789
+    },
+    {
+      "level": "info",
+      "code": "CONSTRAINT_ACTIVE",
+      "message": "The bounded-LM driver held 14 step(s) on a linear inequality constraint (instrument.profile Lorentzian (phases.0): 14; instrument.profile Lorentzian (phases.1): 14; instrument.profile Lorentzian (phases.2): 14; instrument.profile Lorentzian (phases.3): 14; instrument.profile Lorentzian (phases.4): 14) in stage 'closing'.",
+      "where": [],
+      "suggestion": "Vary the starting seed and quote the values only if they survive. At some reflection the data asked for no Gaussian width (the \u0393_G\u00b2 floor, 1e-8 deg\u00b2), so U, V, W and the phase's Gaussian size and strain describe that floor.",
+      "value": null
+    },
+    {
+      "level": "warning",
+      "code": "LEBAIL_ALTERNATION_STOPPED",
+      "message": "The Le Bail alternation stopped at the first pass that did not lower Rwp. Pass 1 of 2 was kept (Rwp % per pass: 20.648, 21.302).",
+      "where": [],
+      "suggestion": "Check the cell and the background before you read the kept pass.",
+      "value": 0.20648295689834362
+    }
+  ]
+}

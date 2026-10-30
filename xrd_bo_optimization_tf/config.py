@@ -25,6 +25,10 @@ REPORTS_DIR = OUTPUTS_DIR / "reports"
 
 PHASE_PURITY_WEIGHT = 0.7
 CRYSTALLINITY_WEIGHT = 0.3
+UNASSIGNED_AREA_PENALTY_LAMBDA = 0.25
+UNASSIGNED_AREA_DIAGNOSTICS_CSV = (
+    RESULTS_DATA_DIR / "bacuse2_xrd_peak_area_diagnostics.csv"
+)
 
 # Reference intensities use the percentage scale shown on the ICDD cards.
 REF_MIN_INTENSITY = 10.0
@@ -39,7 +43,7 @@ PHASES = (TARGET_PHASE, *IMPURITY_PHASES)
 
 REFERENCE_CARD_FILES = {
     "BaCu2Se2": "01-080-2950 BaCu2Se2.rtf",
-    "Cu2Se": "04-024-2128 Cu2Se.rtf",
+    "Cu2Se": "96-101-0582 Cu2Se.rtf",
     "BaSe": "96-900-8602 BaSe.rtf",
     "BaSeO4": "96-810-2887 BaSeO4.rtf",
     "BaSeO3": "00-053-0141 BaSeO3.rtf",
@@ -51,9 +55,31 @@ BO_SUGGESTIONS_CSV = PROCESSED_DATA_DIR / "bacuse2_bo_suggestions.csv"
 GENERATED_XRD_METRICS_CSV = RESULTS_DATA_DIR / "bacuse2_xrd_analysis_metrics.csv"
 
 BO_PARAMETER_COLUMNS = (
+    "hard_bake_temp_c",
+    "selenization_temp_c",
+    "selenization_time_s",
+    "cbc_ratio",
+)
+XRD_PARAMETER_COLUMNS = (
     "spin_speed_rpm",
     "soft_bake_temp_c",
     "hard_bake_temp_c",
     "selenization_temp_c",
     "selenization_time_s",
 )
+
+# (lower, upper, step, decimal places); used identically by skopt and Ax.
+BO_PARAMETER_GRID_SPECS = {
+    "hard_bake_temp_c": (225.0, 250.0, 25.0, 0),
+    "selenization_temp_c": (520.0, 560.0, 10.0, 0),
+    "selenization_time_s": (600.0, 1800.0, 300.0, 0),
+    "cbc_ratio": (0.63, 0.71, 0.01, 2),
+}
+
+SE_PULSE_PROFILE_COLUMN = "se_pulse_profile"
+SE_PULSE_PROFILE_TO_TIMES = {
+    "300/2900 ms": (300, 2900),
+    "500/2700 ms": (500, 2700),
+    "1000/2200 ms": (1000, 2200),
+}
+SE_PULSE_PROFILE_VALUES = tuple(SE_PULSE_PROFILE_TO_TIMES)

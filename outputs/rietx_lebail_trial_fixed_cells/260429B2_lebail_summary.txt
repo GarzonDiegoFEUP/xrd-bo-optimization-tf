@@ -1,0 +1,38 @@
+EXPLORATORY MULTIPHASE LE BAIL FIT
+Sample: 260429B2
+NOMAD archive: data/raw/nomad_staging/mZdfUGtwRr-qtYuvxb0lfQ/260429B2 BaCuSe GI02.archive.json
+Measurement: Grazing Incidence X-Ray Diffraction (GIXRD)
+Omega (deg): [0.2]
+2theta range (deg): 10.0100 to 59.9900
+Point count: 2500; step median (deg): 0.02000
+Cu Kalpha1 (A): 1.5405980
+Cu Kalpha2 (A): 1.5444260; Kalpha2/Kalpha1: 0.5000
+Geometry caveat: rietx 1.10 has no fixed-incidence GIXRD geometry. The instrument uses flat-plate Bragg-Brentano reflection geometry as a profile-fitting proxy; interpret the fit and phase quantities as exploratory only.
+
+Phases: BaCu2Se2, Cu2Se, BaSe, BaSeO3, BaSeO4
+
+RefinementResult: converged (lebail)
+  stage bkg: converged (2 evals, ftol=1e-06)
+  stage zero: converged (53 evals, ftol=1e-06)
+  stage profile_w: converged (22 evals, ftol=1e-06)
+  stage profile: converged (12 evals, ftol=1e-06)
+  stage closing: converged (13 evals, ftol=solver default), max|Δθ|/esd=0.000
+  diagnostics: 7 rows, 0 errors; no deliverable given, so none is printed in full
+    SPECIES_FALLBACK_NEUTRAL at phases.2.atoms.1.species: warning under every purpose
+    SPECIES_FALLBACK_NEUTRAL at phases.3.atoms.2.species, phases.3.atoms.3.species: warning under every purpose
+    SPECIES_FALLBACK_NEUTRAL at phases.4.atoms.1.species: warning under every purpose
+    PEAK_WIDTH_LAW_MISMATCH at phases.0, instrument.profile: warning under every purpose
+    PATTERN_UNDERSAMPLED: warning under qpa, structure, microstructure, calibration, magnetic
+    LEBAIL_ALTERNATION_STOPPED: warning under every purpose
+    CONSTRAINT_ACTIVE: info
+    pass deliverable= to summary() for the rows that decide your purpose; every row is in result.diagnostics
+  provenance: rietx 1.10.0, backend=numpy, solver=lm
+  Rwp 0.1823 / Rexp 0.1408 (GoF 1.29), Rp 0.1340, χ² 1.7, DW 1.70
+
+Residual check around the 22.637° target reference line (window 22.137–23.137°): observed max 266.00 counts, calculated max 228.40 counts; peak positions observed/calculated 22.870/23.010°, window RMSE 19.32 counts.
+
+Selected fitted parameters: {"instrument.zero_shift": {"value": 0.04377812760128635, "stderr": 0.008070785037511536, "vary": true}, "instrument.profile.u": {"value": 8.838161194344492, "stderr": 2.9809772114596673, "vary": true}, "instrument.profile.v": {"value": -5.028004993316365, "stderr": 1.7740185796330998, "vary": true}, "instrument.profile.w": {"value": 0.9773411479671423, "stderr": 0.28913297895793144, "vary": true}, "instrument.profile.x": {"value": 0.41414557397459495, "stderr": 0.1602921639214898, "vary": true}, "instrument.profile.y": {"value": -0.8202677008318766, "stderr": 0.6406381510650249, "vary": true}}
+
+Unit cells are held at the CIF values in this pass; only background, zero shift, and profile parameters are refined.
+
+NOTE: Le Bail intensities are extracted per reflection. This fit does not establish validated phase weight fractions; no quantitative phase fractions are reported from this trial.

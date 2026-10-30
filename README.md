@@ -8,20 +8,29 @@ BaSeO₄ are matched for purity but not drawn in plots). It computes phase purit
 and crystallinity for each film, then uses a Gaussian-process Bayesian
 optimizer to suggest synthesis conditions that maximize a combined score.
 
-The optimization space has nine parameters: spin speed, soft-bake and
-hard-bake temperatures, selenization temperature, selenization time, the
-selenium pulse on/off times, the precursor Cu/(Ba+Cu) ratio (CBC), and the
-spin-to-selenization day gap. Each synthesis record also carries the number of
-spin-coating cycles (deposited layers, excluding dynamic-dispense/seed-layer
-preparation steps) and a Mo-coating flag (substrate) as reported descriptors.
-The exploratory correlation plot in notebook 3 ranks all twelve tracked
-parameters, not just the nine in the optimization space. Two optimization
+The optimization space has five inputs: hard-bake temperature, selenization
+temperature, selenization time, precursor Cu/(Ba+Cu) ratio (CBC), and one
+categorical Se pulse profile. The profile joins the on/off timings because the
+observed settings have a fixed 3200 ms period and exact inverse correlation;
+suggestions also report the corresponding on/off recipe values. Spin speed,
+soft-bake temperature, spin-to-selenization gap, spin-cycle count, and Mo
+coating remain recorded descriptors, not optimizer inputs. The gap and coating
+effects need deliberate matched experiments before inclusion. Two optimization
 strategies are provided:
 
 - **Single objective** (notebook 3, scikit-optimize): maximize
-  `0.7 × phase_purity + 0.3 × crystallinity_norm`.
+  `(0.7 × phase_purity + 0.3 × crystallinity_norm) × (1 − 0.25 × A)`, where
+  `A` is the unmatched/overlap detected-peak-area fraction. This fixed penalty
+  is a provisional screening proxy, not a phase fraction or validated impurity
+  metric; it does not identify the ~23° feature. The four numeric inputs are
+  restricted to the shared experimental recipe grids and the pulse profile is
+  categorical.
 - **Multi-objective** (notebook 4, Ax/BoTorch): maximize phase purity and
-  normalized crystallinity separately and trace the Pareto front (qNEHVI).
+  normalized crystallinity separately, each multiplied by the same configured
+  `(1 − 0.25 × A)` screening factor, and trace the Pareto front (qNEHVI).
+  The same five inputs and numeric grids are used (including 25 °C hard-bake
+  steps), with the pulse profile as one categorical choice. This remains a Pareto formulation, not the same scalar
+  objective as notebook 3.
 
 ## Repository structure
 
