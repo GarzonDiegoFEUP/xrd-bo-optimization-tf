@@ -5,6 +5,7 @@ venv/
 xrd_bo_env/
 .volumes/
 .ipynb_checkpoints/
+**/.gitkeep
 
 # Local secrets (NOMAD API token)
 .env

@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^xrd_bo_env/bin/python scripts/rietx_lebail_trial\\.py$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}
