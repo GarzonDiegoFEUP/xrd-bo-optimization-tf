@@ -57,6 +57,13 @@ strategies are provided:
   2. `2.xrd_analysis.ipynb` — loads XRD scans from the staged NOMAD archives,
      matches peaks, computes metrics, and writes
      `data/results/bacuse2_xrd_analysis_metrics.csv` plus figures.
+  2.1. `2.1.xrd_260901B2_omega.ipynb` — extra XRD analysis for sample 260901B2
+     only: seven grazing-incidence scans at omega 0.1–1.1° (20–35° 2θ). It fits
+     each peak per omega (`data/results/260901B2_omega_peak_fits.csv`), plots
+     intensity vs omega, and compares the ~23° feature with the other 260901
+     samples to test whether it belongs to the film, an impurity, or the
+     substrate. It does not feed the optimizer; notebook 2 uses the full-range
+     GI 0.2° scan for this sample.
   3. `3.bo_xrd.ipynb` — exploratory analysis (Spearman correlations, GP
      objective surface) and single-objective Bayesian-optimization suggestions
      (scikit-optimize, weighted objective).

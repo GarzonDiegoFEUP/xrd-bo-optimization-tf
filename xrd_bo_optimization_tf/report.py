@@ -236,6 +236,28 @@ def build_report(output_path: Path | None = None) -> Path:
             story.append(Spacer(1, 0.15 * cm))
             story.append(fig)
 
+    # 2b. Omega study of 260901B2
+    story.append(Paragraph("Omega study of sample 260901B2", styles["SectionHead"]))
+    story.append(Paragraph(
+        "Seven grazing-incidence scans (omega 0.1–1.1°, 20–35° 2θ) were fitted peak by peak to test "
+        "the origin of the ~23° feature (notebook 2.1; this sample only, not used by the optimizer). "
+        "The feature sits at 22.81° 2θ with FWHM ≈ 0.4–0.5°, matches no reference card within the "
+        "0.15° tolerance (nearest: BaSe at 23.33°), and appears at 22.8–22.9° in all other 260901 films, "
+        "including the new A1, A2 and A4, with strongly varying height. This favours a common "
+        "substrate/instrument contribution over a BaCu<sub>2</sub>Se<sub>2</sub> or known-impurity "
+        "reflection, but peak counts are low (~100) and fits at omega ≥ 0.9° are unreliable, so the "
+        "assignment remains unconfirmed; a bare-SLG scan at the same omegas would settle it.",
+        styles["BodySmall"],
+    ))
+    for name in (
+        "260901B2_omega_peak_intensity_vs_omega.png",
+        "260901B2_omega_other_samples_gi02.png",
+    ):
+        fig = _figure(FIGURES_DIR / name)
+        if fig is not None:
+            story.append(Spacer(1, 0.15 * cm))
+            story.append(fig)
+
     # 3. Main results
     story.append(Paragraph("3. Main results", styles["SectionHead"]))
     best = df_bo.loc[df_bo["objective"].idxmax()]

@@ -10,6 +10,8 @@ import numpy as np
 from .config import NOMAD_VOLUME_DIR, RAW_DATA_DIR
 from .nomad_client import iter_archive_files, read_archive
 
+STANDARD_GIXRD_OMEGA = 0.2
+
 
 def load_xrdml(xrdml_path: Path) -> tuple[np.ndarray, np.ndarray]:
     """Load the 2-theta axis and counts from an XRDML scan."""
@@ -91,7 +93,7 @@ def load_nomad_xrd_data(
             continue
         sample_id = str(archive_data.get("name", "")).split()
         sample_id = sample_id[0] if sample_id else None
-        if sample_id not in requested or sample_id in data:
+        if sample_id not in requested:
             continue
         results = archive_data.get("results", [])
         if (
@@ -108,11 +110,23 @@ def load_nomad_xrd_data(
         count = min(len(theta), len(intensity))
         if count == 0:
             continue
+        theta_array = np.asarray(theta[:count], dtype=np.float64)
+        omega = result.get("omega") or [STANDARD_GIXRD_OMEGA]
+        # Prefer the widest 2-theta range, then omega closest to the standard 0.2 deg.
+        rank = (
+            float(np.ptp(theta_array)),
+            -abs(float(omega[0]) - STANDARD_GIXRD_OMEGA),
+        )
+        if sample_id in data and rank <= data[sample_id]["_rank"]:
+            continue
         data[sample_id] = {
-            "two_theta": np.asarray(theta[:count], dtype=np.float64),
+            "two_theta": theta_array,
             "intensity": np.asarray(intensity[:count], dtype=np.float64),
             "source": "NOMAD",
+            "_rank": rank,
         }
+    for record in data.values():
+        record.pop("_rank")
     return data
 
 
