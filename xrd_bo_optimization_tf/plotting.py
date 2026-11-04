@@ -29,14 +29,17 @@ REFERENCE_COLORS = {
     "BaCu2Se2": COLORBLIND[2],
     "Cu2Se": COLORBLIND[1],
     "BaSeO3": COLORBLIND[9],  # sky blue (avoids hard-to-see yellow)
+    "Au": COLORBLIND[4],
+    "In": COLORBLIND[5],
 }
-# Only these phases are drawn as reference bars (BaSe/BaSeO4 stay matched in
-# purity but are hidden from plots, per project convention).
-PLOT_PHASES = tuple(REFERENCE_COLORS)
+# Reference bars show target and selected impurity cards only. Au/In contact
+# peaks retain their shared marker, but their bottom reflection bars are hidden.
+PLOT_PHASES = ("BaCu2Se2", "Cu2Se", "BaSeO3")
 # Legend entries for detected-peak markers only (reference cards get their own).
 MATCH_LEGEND = (
     ("target", COLOR_TARGET, "*"),
     ("impurity", COLOR_IMPURITY, "s"),
+    ("contact layer (Au/In)", COLORBLIND[4], "D"),
     ("unmatched", COLOR_UNMATCHED, "^"),
 )
 
@@ -63,6 +66,8 @@ def _phase_label(phase: str) -> str:
         "BaSe": "BaSe",
         "BaSeO4": "BaSeO$_4$",
         "BaSeO3": "BaSeO$_3$",
+        "Au": "Au contact",
+        "In": "In contact",
     }
     return formulas.get(phase, phase)
 
@@ -228,6 +233,17 @@ def plot_xrd_series(
                         label=label if index == 0 else "_nolegend_",
                         zorder=3,
                     )
+            contact_matches = result.get("contact", [])
+            if contact_matches:
+                axis.scatter(
+                    [match["detected_theta"] for match in contact_matches],
+                    [match["intensity"] / scale + offset for match in contact_matches],
+                    color=COLORBLIND[4],
+                    marker="D",
+                    s=40,
+                    label="contact-layer match (Au/In)" if index == 0 else "_nolegend_",
+                    zorder=3,
+                )
             # Label each scan inside the plot near the right, just above its baseline.
             axis.text(
                 0.80,
@@ -328,12 +344,39 @@ def plot_all_xrd_patterns(
                     marker=marker,
                     s=32,
                 )
+        contact_matches = result.get("contact", [])
+        if contact_matches:
+            axis.scatter(
+                [match["detected_theta"] for match in contact_matches],
+                [match["intensity"] / scale + index for match in contact_matches],
+                color=COLORBLIND[4],
+                marker="D",
+                s=32,
+            )
     _clip_x_to_data(axis, plotted_results)
     axis.set_yticks([])
     axis.set_xlabel("2-theta (degrees)")
     axis.set_title(f"All analyzed XRD scans (n={len(sample_ids)})")
     axis.grid(True, axis="x", alpha=0.2, linestyle=":")
-    figure.tight_layout()
+    marker_handles = [
+        Line2D(
+            [0],
+            [0],
+            color=color,
+            marker=marker,
+            linestyle="None",
+            label=label,
+        )
+        for label, color, marker in MATCH_LEGEND
+    ]
+    figure.tight_layout(rect=(0, 0, 0.82, 1))
+    axis.legend(
+        handles=marker_handles,
+        loc="upper left",
+        bbox_to_anchor=(1.01, 1.0),
+        frameon=False,
+        fontsize="x-small",
+    )
     if output_path is not None:
         output_path.parent.mkdir(parents=True, exist_ok=True)
         figure.savefig(output_path, dpi=150, bbox_inches="tight")

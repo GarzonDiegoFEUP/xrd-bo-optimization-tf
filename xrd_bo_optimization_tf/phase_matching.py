@@ -9,6 +9,7 @@ from scipy import signal
 from striprtf.striprtf import rtf_to_text
 
 from .config import (
+    CONTACT_PHASES,
     IMPURITY_PHASES,
     MATCH_TOL,
     MAX_CANDIDATE_PEAKS,
@@ -77,8 +78,14 @@ def classify_peaks(
     tolerance: float = MATCH_TOL,
     min_fwhm: float = MIN_FWHM,
     max_candidate_peaks: int = MAX_CANDIDATE_PEAKS,
-) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
-    """Match detected peaks to one phase reference or leave them unmatched."""
+    contact_phases: tuple[str, ...] | None = None,
+) -> tuple[
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+]:
+    """Match peaks as target, impurity, contact, or unmatched."""
     theta = np.asarray(two_theta, dtype=np.float64)
     values = np.asarray(intensity, dtype=np.float64)
     peaks = np.asarray(peak_indices, dtype=int)
@@ -95,8 +102,17 @@ def classify_peaks(
         raise ValueError(
             f"Missing reference peaks for phases: {sorted(missing_phases)}"
         )
+    active_contacts = CONTACT_PHASES if contact_phases is None else tuple(contact_phases)
+    unknown_contacts = set(active_contacts).difference(CONTACT_PHASES)
+    if unknown_contacts:
+        raise ValueError(f"Unknown contact phases: {sorted(unknown_contacts)}")
+    active_phases = (
+        TARGET_PHASE,
+        *IMPURITY_PHASES,
+        *active_contacts,
+    )
     if peaks.size == 0:
-        return [], [], []
+        return [], [], [], []
 
     widths, _, _, _ = signal.peak_widths(values, peaks, rel_height=0.5)
     step = float(np.mean(np.diff(theta)))
@@ -131,7 +147,7 @@ def classify_peaks(
         phase = next(
             (
                 candidate
-                for candidate in PHASES
+                for candidate in active_phases
                 if any(
                     abs(peak["detected_theta"] - reference_theta) <= tolerance
                     for reference_theta in references[candidate]
@@ -143,7 +159,8 @@ def classify_peaks(
 
     target = matches[TARGET_PHASE]
     impurities = [peak for phase in IMPURITY_PHASES for peak in matches[phase]]
-    return target, impurities, matches["Unmatched"]
+    contacts = [peak for phase in CONTACT_PHASES for peak in matches[phase]]
+    return target, impurities, contacts, matches["Unmatched"]
 
 
 def _window_mask(
@@ -186,15 +203,21 @@ def analyze_pattern(
     two_theta: np.ndarray,
     intensity: np.ndarray,
     references: dict[str, list[float]],
+    contact_phases: tuple[str, ...] | None = None,
 ) -> dict[str, Any]:
     """Preprocess, classify, and compute XRD phase metrics for one film."""
     result = analyze_scan(two_theta, intensity)
-    target, impurities, unmatched = classify_peaks(
-        result["two_theta"], result["smooth"], result["detected_peaks"], references
+    target, impurities, contacts, unmatched = classify_peaks(
+        result["two_theta"],
+        result["smooth"],
+        result["detected_peaks"],
+        references,
+        contact_phases=contact_phases,
     )
     result.update(
         target=target,
         impurity=impurities,
+        contact=contacts,
         unmatched=unmatched,
     )
     result.update(
@@ -203,3 +226,33 @@ def analyze_pattern(
         )
     )
     return result
+
+
+def build_peak_list(
+    xrd_results: dict[str, dict[str, Any]],
+    series_by_sample: dict[str, str] | None = None,
+) -> list[dict[str, Any]]:
+    """Return one row per classified detected peak for CSV export."""
+    series_by_sample = series_by_sample or {}
+    peak_groups = (
+        ("target", "target"),
+        ("impurity", "impurity"),
+        ("contact", "contact"),
+        ("unmatched", "unmatched"),
+    )
+    rows = []
+    for sample_id, result in sorted(xrd_results.items()):
+        for category, key in peak_groups:
+            for peak in result.get(key, []):
+                rows.append(
+                    {
+                        "sample_id": sample_id,
+                        "series": series_by_sample.get(sample_id),
+                        "two_theta_deg": float(peak["detected_theta"]),
+                        "fwhm_deg": float(peak["fwhm"]),
+                        "detected_intensity": float(peak["intensity"]),
+                        "match_category": category,
+                        "phase": peak.get("match_type", "Unmatched"),
+                    }
+                )
+    return sorted(rows, key=lambda row: (row["sample_id"], row["two_theta_deg"]))

@@ -199,6 +199,9 @@ def build_report(output_path: Path | None = None) -> Path:
         f"For the {len(metrics)} films with XRD scans, diffraction patterns were matched against reference "
         f"cards for the α-BaCu<sub>2</sub>Se<sub>2</sub> target (01-080-2950), "
         f"Cu<sub>2</sub>Se (96-101-0582; α-Cu<sub>2</sub>Se), and BaSeO<sub>3</sub> (00-053-0141). "
+        f"Au (96-901-1613) and In (96-151-2514) are classified separately as contact-layer matches "
+        f"with one shared plot symbol; their detected-peak intervals are excluded from phase-purity "
+        f"accounting and the unmatched/overlap penalty. In matching is restricted to series 260929A. "
         f"Phase purity and crystallinity (1/FWHM of the strongest target match) were computed per film. "
         f"A Gaussian-process Bayesian optimizer was trained on the {len(df_bo)} complete films to "
         f"recommend the next synthesis conditions, optimizing objective = "
@@ -209,6 +212,7 @@ def build_report(output_path: Path | None = None) -> Path:
         f"{SE_PULSE_FREQUENCY_HZ:.4f} Hz and is reported as metadata, not optimized. Intermediate duty "
         f"cycles are model interpolations from three observed levels and should be treated as exploratory; "
         f"recommended on-times are quantized to 1 ms increments. "
+        f"A long-form CSV of classified detected peaks is exported for sample-level audit. "
         f"CBC is defined as n<sub>Cu</sub>/(n<sub>Ba</sub>+n<sub>Cu</sub>); "
         f"the candidate grid is {BO_PARAMETER_GRID_SPECS['cbc_ratio'][0]:.2f}–"
         f"{BO_PARAMETER_GRID_SPECS['cbc_ratio'][1]:.2f}, so a ratio of 1 (no Ba) is excluded. "
@@ -221,8 +225,9 @@ def build_report(output_path: Path | None = None) -> Path:
     # 2. XRD results figure
     story.append(Paragraph("2. XRD phase identification", styles["SectionHead"]))
     story.append(Paragraph(
-        "Stacked XRD patterns per series with reference bars for the target and impurity phases. "
-        "Markers flag target (star), impurity (square), and unmatched (triangle) peaks.",
+        "Stacked XRD patterns per series with reference bars for the target and selected impurity phases. "
+        "Markers flag target (star), impurity (square), shared Au/In contact (diamond), and unmatched "
+        "(triangle) peaks. Au/In reference-card bars are omitted.",
         styles["BodySmall"],
     ))
     for name in ("bacuse2_xrd_series_260929A.png", "bacuse2_xrd_all_samples.png"):

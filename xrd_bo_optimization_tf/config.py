@@ -39,7 +39,9 @@ MAX_CANDIDATE_PEAKS = 30
 
 TARGET_PHASE = "BaCu2Se2"
 IMPURITY_PHASES = ("Cu2Se", "BaSe", "BaSeO4", "BaSeO3")
-PHASES = (TARGET_PHASE, *IMPURITY_PHASES)
+CONTACT_PHASES = ("Au", "In")
+IN_CONTACT_ALLOWED_SERIES = ("260929A",)
+PHASES = (TARGET_PHASE, *IMPURITY_PHASES, *CONTACT_PHASES)
 
 REFERENCE_CARD_FILES = {
     "BaCu2Se2": "01-080-2950 BaCu2Se2.rtf",
@@ -47,12 +49,15 @@ REFERENCE_CARD_FILES = {
     "BaSe": "96-900-8602 BaSe.rtf",
     "BaSeO4": "96-810-2887 BaSeO4.rtf",
     "BaSeO3": "00-053-0141 BaSeO3.rtf",
+    "Au": "96-901-1613 Au.rtf",
+    "In": "96-151-2514 In.rtf",
 }
 
 SYNTHESIS_CSV = PROCESSED_DATA_DIR / "bacuse2_synthesis_database_37samples.csv"
 XRD_METRICS_CSV = PROCESSED_DATA_DIR / "bacuse2_xrd_analysis_metrics.csv"
 BO_SUGGESTIONS_CSV = PROCESSED_DATA_DIR / "bacuse2_bo_suggestions.csv"
 GENERATED_XRD_METRICS_CSV = RESULTS_DATA_DIR / "bacuse2_xrd_analysis_metrics.csv"
+XRD_PEAK_LIST_CSV = RESULTS_DATA_DIR / "bacuse2_xrd_peak_list.csv"
 
 BO_PARAMETER_COLUMNS = (
     "hard_bake_temp_c",

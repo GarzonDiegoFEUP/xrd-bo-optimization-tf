@@ -3,10 +3,15 @@
 This project analyzes α-BaCu₂Se₂ thin films using synthesis parameters and
 X-ray diffraction (XRD) scans pulled directly from the NOMAD Oasis REST API.
 The pipeline matches observed XRD peaks to ICDD reference cards to identify the
-α-BaCu₂Se₂ target phase and the Cu₂Se and BaSeO₃ impurity phases (BaSe and
-BaSeO₄ are matched for purity but not drawn in plots). It computes phase purity
-and crystallinity for each film, then uses a Gaussian-process Bayesian
-optimizer to suggest synthesis conditions that maximize a combined score.
+α-BaCu₂Se₂ target phase, Cu₂Se and Ba-Se oxide/selenide impurities, and Au/In
+contact-layer peaks. In is considered a contact only in series 260929A; Au may
+be matched across series. Contacts are classified separately and plotted with
+one shared marker, but their reference-card bars are hidden. Contact intervals
+are excluded from both the target-vs-impurity phase-purity calculation and the
+unmatched/overlap screening penalty. BaSe and BaSeO₄ are also matched for purity
+but their reference bars are hidden. The pipeline computes phase purity and
+crystallinity for each film, then uses a Gaussian-process Bayesian optimizer to
+suggest synthesis conditions that maximize a combined score.
 
 The optimization space has five inputs: hard-bake temperature, selenization
 temperature, selenization time, precursor Cu/(Ba+Cu) ratio (CBC), and continuous
@@ -23,14 +28,16 @@ strategies are provided:
 
 - **Single objective** (notebook 3, scikit-optimize): maximize
   `(0.7 × phase_purity + 0.3 × crystallinity_norm) × (1 − 0.25 × A)`, where
-  `A` is the unmatched/overlap detected-peak-area fraction. This fixed penalty
-  is a provisional screening proxy, not a phase fraction or validated impurity
-  metric; it does not identify the ~23° feature. The four numeric inputs are
+  `A` is the unmatched/overlap detected-peak-area fraction after known Au/In
+  contact intervals are excluded (In only in series 260929A). This fixed penalty is a provisional screening
+  proxy, not a phase fraction or validated impurity metric; it does not
+  independently identify the ~23° feature. The four numeric inputs are
   restricted to the shared experimental recipe grids and duty cycle is modeled
   continuously over the observed timing bounds.
 - **Multi-objective** (notebook 4, Ax/BoTorch): maximize phase purity and
   normalized crystallinity separately, each multiplied by the same configured
-  `(1 − 0.25 × A)` screening factor, and trace the Pareto front (qNEHVI).
+  `(1 − 0.25 × A)` screening factor, and trace the Pareto front (qNEHVI). Au/In
+  contact intervals are excluded from `A` in this objective as well.
   The same five inputs and numeric grids are used (including 25 °C hard-bake
   steps), with duty cycle as a continuous input. This remains a Pareto formulation, not the same scalar
   objective as notebook 3.
@@ -61,10 +68,13 @@ strategies are provided:
   gitignored cache of NOMAD archives downloaded by notebook 1.
 - `data/references/` — ICDD reference cards (`.rtf`):
   `01-080-2950 BaCu2Se2` (target), `96-101-0582 Cu2Se` (α-Cu2Se), `00-053-0141 BaSeO3`,
-  plus `96-900-8602 BaSe` and `96-810-2887 BaSeO4` (matched, not plotted).
+  plus `96-900-8602 BaSe` and `96-810-2887 BaSeO4` (matched, not plotted),
+  `96-901-1613 Au`, and `96-151-2514 In` (contact layers; excluded from purity
+  and penalty).
 - `data/processed/` — synthesis tables and the BaCuSe upload-ID list
   (`bacuse_upload_ids.txt`).
-- `data/results/` — generated XRD metrics and BO suggestions.
+- `data/results/` — generated XRD metrics, classified per-peak export
+  (`bacuse2_xrd_peak_list.csv`), and BO suggestions.
 - `outputs/figures/` and `outputs/reports/` — generated figures and the PDF
   report.
 

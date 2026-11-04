@@ -81,8 +81,10 @@ def detected_peak_area_fractions(
 
     matched_mask = np.zeros(theta.size, dtype=bool)
     unmatched_mask = np.zeros(theta.size, dtype=bool)
+    contact_mask = np.zeros(theta.size, dtype=bool)
     matched_peaks = [*analysis.get("target", []), *analysis.get("impurity", [])]
     unmatched_peaks = list(analysis.get("unmatched", []))
+    contact_peaks = list(analysis.get("contact", []))
 
     def add_intervals(mask: np.ndarray, peaks: Sequence[Mapping[str, Any]]) -> None:
         for peak in peaks:
@@ -93,9 +95,14 @@ def detected_peak_area_fractions(
 
     add_intervals(matched_mask, matched_peaks)
     add_intervals(unmatched_mask, unmatched_peaks)
-    overlap_mask = matched_mask & unmatched_mask
-    matched_only_mask = matched_mask & ~unmatched_mask
-    unmatched_only_mask = unmatched_mask & ~matched_mask
+    add_intervals(contact_mask, contact_peaks)
+    # Contact-layer peak intervals are excluded from both the unmatched/overlap
+    # numerator and its denominator. This avoids penalizing electrode signal.
+    non_contact = ~contact_mask
+    overlap_mask = matched_mask & unmatched_mask & non_contact
+    matched_only_mask = matched_mask & ~unmatched_mask & non_contact
+    unmatched_only_mask = unmatched_mask & ~matched_mask & non_contact
+    contact_excluded_mask = contact_mask
 
     def area(mask: np.ndarray) -> float:
         indices = np.flatnonzero(mask)
@@ -118,9 +125,11 @@ def detected_peak_area_fractions(
     return {
         "n_matched_peaks": len(matched_peaks),
         "n_unmatched_peaks": len(unmatched_peaks),
+        "n_contact_peaks": len(contact_peaks),
         "matched_detected_area": matched_area,
         "unmatched_detected_area": unmatched_area,
         "overlap_ambiguous_detected_area": overlap_area,
+        "contact_excluded_detected_area": area(contact_excluded_mask),
         "unassigned_or_overlap_area_fraction": (
             (unmatched_area + overlap_area) / denominator if denominator > 0 else np.nan
         ),
