@@ -243,10 +243,11 @@ def build_report(output_path: Path | None = None) -> Path:
         "the origin of the ~23° feature (notebook 2.1; this sample only, not used by the optimizer). "
         "The feature sits at 22.81° 2θ with FWHM ≈ 0.4–0.5°, matches no reference card within the "
         "0.15° tolerance (nearest: BaSe at 23.33°), and appears at 22.8–22.9° in all other 260901 films, "
-        "including the new A1, A2 and A4, with strongly varying height. This favours a common "
-        "substrate/instrument contribution over a BaCu<sub>2</sub>Se<sub>2</sub> or known-impurity "
-        "reflection, but peak counts are low (~100) and fits at omega ≥ 0.9° are unreliable, so the "
-        "assignment remains unconfirmed; a bare-SLG scan at the same omegas would settle it.",
+        "including the new A1, A2 and A4, with strongly varying height. Since the SLG substrate shows "
+        "no sharp peak at 23°, the feature originates in the film side: either an unlisted secondary "
+        "phase or a BaCu<sub>2</sub>Se<sub>2</sub>-related reflection. Peak counts are low (~100) and fits "
+        "at omega ≥ 0.9° are unreliable, so the assignment remains unconfirmed; longer counting times "
+        "and a candidate-phase search near 22.8° would help.",
         styles["BodySmall"],
     ))
     for name in (

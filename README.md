@@ -61,8 +61,8 @@ strategies are provided:
      only: seven grazing-incidence scans at omega 0.1–1.1° (20–35° 2θ). It fits
      each peak per omega (`data/results/260901B2_omega_peak_fits.csv`), plots
      intensity vs omega, and compares the ~23° feature with the other 260901
-     samples to test whether it belongs to the film, an impurity, or the
-     substrate. It does not feed the optimizer; notebook 2 uses the full-range
+     samples to test whether it belongs to the BaCuSe layer or to an
+     impurity/secondary phase. It does not feed the optimizer; notebook 2 uses the full-range
      GI 0.2° scan for this sample.
   3. `3.bo_xrd.ipynb` — exploratory analysis (Spearman correlations, GP
      objective surface) and single-objective Bayesian-optimization suggestions
