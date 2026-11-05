@@ -197,9 +197,12 @@ def build_report(output_path: Path | None = None) -> Path:
         f"(deposited layers, excluding dynamic-dispense/seed-layer preparation steps), "
         f"the Mo-coating flag, and the spin-to-selenization day gap. "
         f"For the {len(metrics)} films with XRD scans, diffraction patterns were matched against reference "
-        f"cards for the α-BaCu<sub>2</sub>Se<sub>2</sub> target (01-080-2950), "
-        f"Cu<sub>2</sub>Se (96-101-0582; α-Cu<sub>2</sub>Se), and BaSeO<sub>3</sub> (00-053-0141). "
-        f"Au (96-901-1613) and In (96-151-2514) are classified separately as contact-layer matches "
+        f"cards for the α-BaCu<sub>2</sub>Se<sub>2</sub> target (01-080-2950) and the impurities "
+        f"β-BaCu<sub>2</sub>Se<sub>2</sub> (04-008-2861), Cu<sub>2</sub>Se (01-080-4377), CuSe (00-049-1456), "
+        f"BaSe (01-071-4770), BaSe<sub>2</sub> (04-004-8560), BaSe<sub>3</sub> (04-004-8559), "
+        f"BaSeO<sub>3</sub> (04-014-7500) and BaSeO<sub>4</sub> (04-011-7418); the α target always wins "
+        f"an overlap, otherwise the closest reflection decides. "
+        f"Au (00-004-0784) and In (00-005-0642) are classified separately as contact-layer matches "
         f"with one shared plot symbol; their detected-peak intervals are excluded from phase-purity "
         f"accounting and the unmatched/overlap penalty. In matching is restricted to series 260929A. "
         f"Phase purity and crystallinity (1/FWHM of the strongest target match) were computed per film. "
@@ -225,8 +228,10 @@ def build_report(output_path: Path | None = None) -> Path:
     # 2. XRD results figure
     story.append(Paragraph("2. XRD phase identification", styles["SectionHead"]))
     story.append(Paragraph(
-        "Stacked XRD patterns per series with reference bars for the target and selected impurity phases. "
-        "Markers flag target (star), impurity (square), shared Au/In contact (diamond), and unmatched "
+        "Stacked XRD patterns per series with reference bars for the α target (always shown) and "
+        "only those impurity phases matched in the series' patterns. "
+        "Markers flag target (star), impurity (square, colored by phase), shared Au/In contact (diamond), "
+        "and unmatched "
         "(triangle) peaks. Au/In reference-card bars are omitted.",
         styles["BodySmall"],
     ))
@@ -241,18 +246,24 @@ def build_report(output_path: Path | None = None) -> Path:
     story.append(Paragraph(
         "Seven grazing-incidence scans (omega 0.1–1.1°, 20–35° 2θ) were fitted peak by peak to test "
         "the origin of the ~23° feature (notebook 2.1; this sample only, not used by the optimizer). "
-        "The feature sits at 22.81° 2θ with FWHM ≈ 0.4–0.5°, matches no reference card within the "
-        "0.15° tolerance (nearest: BaSe at 23.33°), and appears at 22.8–22.9° in all other 260901 films, "
-        "including the new A1, A2 and A4, with strongly varying height. Since the SLG substrate shows "
-        "no sharp peak at 23°, the feature originates in the film side: either an unlisted secondary "
-        "phase or a BaCu<sub>2</sub>Se<sub>2</sub>-related reflection. Peak counts are low (~100) and fits "
-        "at omega ≥ 0.9° are unreliable, so the assignment remains unconfirmed; longer counting times "
-        "and a candidate-phase search near 22.8° would help.",
+        "The feature sits at 22.81° 2θ with FWHM ≈ 0.4–0.5°. The 10 %-intensity matching used for "
+        "purity does not assign it, but the cards list weak lines near it: α-BaCu<sub>2</sub>Se<sub>2</sub> at "
+        "22.64° (4.6 %) and β-BaCu<sub>2</sub>Se<sub>2</sub> at 23.01° (3.0 %), 0.17° below and 0.20° above "
+        "the sample 260901B2 peak. Across all films the feature sits at 22.86–22.98° in series 260429A/B/C, "
+        "260721D and 260901A (closer to the β line) and at 22.68° in series 260929A (closer to the α line), "
+        "so it is a film-side reflection of the BaCu<sub>2</sub>Se<sub>2</sub> family rather than a Cu–Se, "
+        "Ba–Se or Ba–Se–O impurity line. In the eight films with the strongest peak it is 30–100 times more "
+        "intense relative to the main α and β lines than the cards predict, so strong texture is required. "
+        "A second-order peak at 46.6–46.9° (d<sub>1</sub>/d<sub>2</sub> = 2.00) gives d = 3.87–3.89 Å, closer to "
+        "β (101) at 3.863 Å than to α (011) at 3.925 Å; the β (103) line at 30.02° is at most marginal. This "
+        "favours the β polymorph but matches neither card exactly, so the assignment remains unconfirmed; "
+        "a symmetric θ–2θ scan, a rocking curve and a pole figure at 22.9° would settle it. The SLG substrate "
+        "shows no sharp peak at 23°.",
         styles["BodySmall"],
     ))
     for name in (
         "260901B2_omega_peak_intensity_vs_omega.png",
-        "260901B2_omega_other_samples_gi02.png",
+        "260901B2_omega_position_by_series.png",
     ):
         fig = _figure(FIGURES_DIR / name)
         if fig is not None:

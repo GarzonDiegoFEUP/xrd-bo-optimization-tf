@@ -106,11 +106,6 @@ def classify_peaks(
     unknown_contacts = set(active_contacts).difference(CONTACT_PHASES)
     if unknown_contacts:
         raise ValueError(f"Unknown contact phases: {sorted(unknown_contacts)}")
-    active_phases = (
-        TARGET_PHASE,
-        *IMPURITY_PHASES,
-        *active_contacts,
-    )
     if peaks.size == 0:
         return [], [], [], []
 
@@ -143,18 +138,22 @@ def classify_peaks(
     matches: dict[str, list[dict[str, Any]]] = {
         phase: [] for phase in (*PHASES, "Unmatched")
     }
+    # The target wins any overlap; otherwise the closest reflection within a group wins.
+    phase_groups = ((TARGET_PHASE,), IMPURITY_PHASES, active_contacts)
+
+    def nearest_phase(detected_theta: float) -> str:
+        for group in phase_groups:
+            distances = {
+                phase: min(abs(detected_theta - ref) for ref in references[phase])
+                for phase in group
+            }
+            phase = min(distances, key=distances.get, default=None)
+            if phase is not None and distances[phase] <= tolerance:
+                return phase
+        return "Unmatched"
+
     for peak in accepted:
-        phase = next(
-            (
-                candidate
-                for candidate in active_phases
-                if any(
-                    abs(peak["detected_theta"] - reference_theta) <= tolerance
-                    for reference_theta in references[candidate]
-                )
-            ),
-            "Unmatched",
-        )
+        phase = nearest_phase(peak["detected_theta"])
         matches[phase].append({**peak, "match_type": phase})
 
     target = matches[TARGET_PHASE]

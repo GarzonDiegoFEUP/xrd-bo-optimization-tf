@@ -3,13 +3,15 @@
 This project analyzes α-BaCu₂Se₂ thin films using synthesis parameters and
 X-ray diffraction (XRD) scans pulled directly from the NOMAD Oasis REST API.
 The pipeline matches observed XRD peaks to ICDD reference cards to identify the
-α-BaCu₂Se₂ target phase, Cu₂Se and Ba-Se oxide/selenide impurities, and Au/In
+α-BaCu₂Se₂ target phase, impurities (β-BaCu₂Se₂, Cu₂Se, CuSe, BaSe, BaSe₂,
+BaSe₃, BaSeO₃, BaSeO₄), and Au/In
 contact-layer peaks. In is considered a contact only in series 260929A; Au may
 be matched across series. Contacts are classified separately and plotted with
 one shared marker, but their reference-card bars are hidden. Contact intervals
 are excluded from both the target-vs-impurity phase-purity calculation and the
-unmatched/overlap screening penalty. BaSe and BaSeO₄ are also matched for purity
-but their reference bars are hidden. The pipeline computes phase purity and
+unmatched/overlap screening penalty. The α target is always drawn in the XRD
+plots; impurity reference bars and markers appear only for phases with matched
+peaks. The pipeline computes phase purity and
 crystallinity for each film, then uses a Gaussian-process Bayesian optimizer to
 suggest synthesis conditions that maximize a combined score.
 
@@ -62,7 +64,7 @@ strategies are provided:
      each peak per omega (`data/results/260901B2_omega_peak_fits.csv`), plots
      intensity vs omega, and compares the ~23° feature with the other 260901
      samples to test whether it belongs to the BaCuSe layer or to an
-     impurity/secondary phase. It does not feed the optimizer; notebook 2 uses the full-range
+     impurity/secondary phase. It uses a lowered 3 % card-intensity threshold to include the weak alpha/beta lines near 23°. It does not feed the optimizer; notebook 2 uses the full-range
      GI 0.2° scan for this sample.
   3. `3.bo_xrd.ipynb` — exploratory analysis (Spearman correlations, GP
      objective surface) and single-objective Bayesian-optimization suggestions
@@ -73,11 +75,15 @@ strategies are provided:
      notebook 3.
 - `data/raw/` — local `.xrdml` backups; `data/raw/nomad_staging/` is a
   gitignored cache of NOMAD archives downloaded by notebook 1.
-- `data/references/` — ICDD reference cards (`.rtf`):
-  `01-080-2950 BaCu2Se2` (target), `96-101-0582 Cu2Se` (α-Cu2Se), `00-053-0141 BaSeO3`,
-  plus `96-900-8602 BaSe` and `96-810-2887 BaSeO4` (matched, not plotted),
-  `96-901-1613 Au`, and `96-151-2514 In` (contact layers; excluded from purity
-  and penalty).
+- `data/references/` — ICDD reference cards (`.rtf`), keyed in
+  `REFERENCE_CARD_FILES` in `config.py`: `01-080-2950 alpha BaCu2Se2` (target),
+  `04-008-2861 beta BaCu2Se2` (tetragonal polymorph, counted as impurity),
+  `01-080-4377 Cu2Se`, `00-049-1456 CuSe`, `01-071-4770 BaSe`,
+  `04-004-8560 BaSe2`, `04-004-8559 BaSe3`, `04-014-7500 BaSeO3`,
+  `04-011-7418 BaSeO4`, and the contact layers `00-004-0784 Au` and
+  `00-005-0642 In` (excluded from purity and penalty). Only reflections of at
+  least 10 % relative intensity are matched; when several impurity cards match,
+  the closest reflection wins, and the α target wins any overlap.
 - `data/processed/` — synthesis tables and the BaCuSe upload-ID list
   (`bacuse_upload_ids.txt`).
 - `data/results/` — generated XRD metrics, classified per-peak export

@@ -14,6 +14,7 @@ from .config import (
     BO_PARAMETER_COLUMNS,
     FIGURES_DIR,
     REFERENCE_CARD_FILES,
+    TARGET_PHASE,
 )
 
 # Presentation-friendly defaults with a colorblind-safe palette.
@@ -26,15 +27,21 @@ COLOR_TARGET = COLORBLIND[2]     # green
 COLOR_IMPURITY = COLORBLIND[1]   # orange
 COLOR_UNMATCHED = COLORBLIND[3]  # reddish pink
 REFERENCE_COLORS = {
-    "BaCu2Se2": COLORBLIND[2],
+    TARGET_PHASE: COLORBLIND[2],
+    "BaCu2Se2_beta": "#D55E00",
     "Cu2Se": COLORBLIND[1],
+    "CuSe": "#CC79A7",
+    "BaSe": "#7F7F7F",
+    "BaSe2": "#B8860B",
+    "BaSe3": "#17BECF",
     "BaSeO3": COLORBLIND[9],  # sky blue (avoids hard-to-see yellow)
+    "BaSeO4": "#4B0082",
     "Au": COLORBLIND[4],
     "In": COLORBLIND[5],
 }
-# Reference bars show target and selected impurity cards only. Au/In contact
-# peaks retain their shared marker, but their bottom reflection bars are hidden.
-PLOT_PHASES = ("BaCu2Se2", "Cu2Se", "BaSeO3")
+# Reference bars: the alpha target is always drawn; impurity cards only when one
+# of their reflections matched a detected peak. Au/In contact peaks keep their
+# shared marker, but their reflection bars are hidden.
 # Legend entries for detected-peak markers only (reference cards get their own).
 MATCH_LEGEND = (
     ("target", COLOR_TARGET, "*"),
@@ -61,9 +68,13 @@ def _clip_x_to_data(axis: plt.Axes, spectra: list[Any]) -> tuple[float, float] |
 def _phase_label(phase: str) -> str:
     """Render a phase key as a formatted chemical formula."""
     formulas = {
-        "BaCu2Se2": "$\\alpha$-BaCu$_2$Se$_2$",
+        TARGET_PHASE: "$\\alpha$-BaCu$_2$Se$_2$",
+        "BaCu2Se2_beta": "$\\beta$-BaCu$_2$Se$_2$",
         "Cu2Se": "Cu$_2$Se",
+        "CuSe": "CuSe",
         "BaSe": "BaSe",
+        "BaSe2": "BaSe$_2$",
+        "BaSe3": "BaSe$_3$",
         "BaSeO4": "BaSeO$_4$",
         "BaSeO3": "BaSeO$_3$",
         "Au": "Au contact",
@@ -72,10 +83,21 @@ def _phase_label(phase: str) -> str:
     return formulas.get(phase, phase)
 
 
-def _reference_legend_handles() -> list[Line2D]:
+def _matched_phases(results: list[dict[str, Any]]) -> tuple[str, ...]:
+    """Target phase plus the impurity phases matched in any of the given scans."""
+    matched = {
+        peak.get("match_type")
+        for result in results
+        for peak in result.get("impurity", [])
+    }
+    ordered = [phase for phase in REFERENCE_CARD_FILES if phase in matched]
+    return (TARGET_PHASE, *ordered)
+
+
+def _reference_legend_handles(phases: tuple[str, ...]) -> list[Line2D]:
     """Legend handles for each plotted reference card, labeled with its number."""
     handles = []
-    for phase in PLOT_PHASES:
+    for phase in phases:
         filename = REFERENCE_CARD_FILES[phase]
         formula = _phase_label(phase)
         card = filename.split(" ", 1)[0]
@@ -218,8 +240,7 @@ def plot_xrd_series(
             offset = float(index)
             axis.plot(theta, spectrum / scale + offset, color=COLOR_SCAN, linewidth=0.9)
             for key, color, marker, label in (
-                ("target", COLOR_TARGET, "*", f"{_phase_label('BaCu2Se2')} match"),
-                ("impurity", COLOR_IMPURITY, "s", "impurity match"),
+                ("target", COLOR_TARGET, "*", f"{_phase_label(TARGET_PHASE)} match"),
                 ("unmatched", COLOR_UNMATCHED, "^", "unmatched peak"),
             ):
                 matches = result.get(key, [])
@@ -233,6 +254,20 @@ def plot_xrd_series(
                         label=label if index == 0 else "_nolegend_",
                         zorder=3,
                     )
+            impurity_matches = result.get("impurity", [])
+            if impurity_matches:
+                axis.scatter(
+                    [match["detected_theta"] for match in impurity_matches],
+                    [match["intensity"] / scale + offset for match in impurity_matches],
+                    color=[
+                        REFERENCE_COLORS.get(match["match_type"], COLOR_IMPURITY)
+                        for match in impurity_matches
+                    ],
+                    marker="s",
+                    s=40,
+                    label="impurity match (colored by phase)" if index == 0 else "_nolegend_",
+                    zorder=3,
+                )
             contact_matches = result.get("contact", [])
             if contact_matches:
                 axis.scatter(
@@ -256,7 +291,8 @@ def plot_xrd_series(
 
         # One shared set of reference bars below all experimental scans.
         ref_base = -0.6
-        plotted_refs = {p: references[p] for p in PLOT_PHASES if p in references}
+        shown_phases = _matched_phases(plotted_results)
+        plotted_refs = {p: references[p] for p in shown_phases if p in references}
         for phase_index, (phase, positions) in enumerate(plotted_refs.items()):
             axis.vlines(
                 positions,
@@ -284,7 +320,7 @@ def plot_xrd_series(
         # sits in the right margin with its bottom aligned to the y-axis start.
         figure.tight_layout(rect=(0, 0, 0.78, 1))
         axis.legend(
-            handles=handles + _reference_legend_handles(),
+            handles=handles + _reference_legend_handles(shown_phases),
             loc="lower left",
             bbox_to_anchor=(1.02, 0.0),
             ncol=1,
@@ -332,7 +368,6 @@ def plot_all_xrd_patterns(
         )
         for key, color, marker in (
             ("target", COLOR_TARGET, "*"),
-            ("impurity", COLOR_IMPURITY, "s"),
             ("unmatched", COLOR_UNMATCHED, "^"),
         ):
             matches = result.get(key, [])
@@ -344,6 +379,18 @@ def plot_all_xrd_patterns(
                     marker=marker,
                     s=32,
                 )
+        impurity_matches = result.get("impurity", [])
+        if impurity_matches:
+            axis.scatter(
+                [match["detected_theta"] for match in impurity_matches],
+                [match["intensity"] / scale + index for match in impurity_matches],
+                color=[
+                    REFERENCE_COLORS.get(match["match_type"], COLOR_IMPURITY)
+                    for match in impurity_matches
+                ],
+                marker="s",
+                s=32,
+            )
         contact_matches = result.get("contact", [])
         if contact_matches:
             axis.scatter(
@@ -368,6 +415,18 @@ def plot_all_xrd_patterns(
             label=label,
         )
         for label, color, marker in MATCH_LEGEND
+        if label != "impurity"
+    ]
+    marker_handles += [
+        Line2D(
+            [0],
+            [0],
+            color=REFERENCE_COLORS.get(phase, COLOR_IMPURITY),
+            marker="s",
+            linestyle="None",
+            label=f"{_phase_label(phase)} (impurity)",
+        )
+        for phase in _matched_phases(plotted_results)[1:]
     ]
     figure.tight_layout(rect=(0, 0, 0.82, 1))
     axis.legend(

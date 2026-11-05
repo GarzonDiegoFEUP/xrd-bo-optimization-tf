@@ -37,20 +37,34 @@ MATCH_TOL = 0.15
 MIN_FWHM = 0.1
 MAX_CANDIDATE_PEAKS = 30
 
-TARGET_PHASE = "BaCu2Se2"
-IMPURITY_PHASES = ("Cu2Se", "BaSe", "BaSeO4", "BaSeO3")
+TARGET_PHASE = "BaCu2Se2_alpha"
+# beta-BaCu2Se2 (tetragonal) is a polymorph of the target, counted as an impurity.
+IMPURITY_PHASES = (
+    "BaCu2Se2_beta",
+    "Cu2Se",
+    "CuSe",
+    "BaSe",
+    "BaSe2",
+    "BaSe3",
+    "BaSeO3",
+    "BaSeO4",
+)
 CONTACT_PHASES = ("Au", "In")
 IN_CONTACT_ALLOWED_SERIES = ("260929A",)
 PHASES = (TARGET_PHASE, *IMPURITY_PHASES, *CONTACT_PHASES)
 
 REFERENCE_CARD_FILES = {
-    "BaCu2Se2": "01-080-2950 BaCu2Se2.rtf",
-    "Cu2Se": "96-101-0582 Cu2Se.rtf",
-    "BaSe": "96-900-8602 BaSe.rtf",
-    "BaSeO4": "96-810-2887 BaSeO4.rtf",
-    "BaSeO3": "00-053-0141 BaSeO3.rtf",
-    "Au": "96-901-1613 Au.rtf",
-    "In": "96-151-2514 In.rtf",
+    "BaCu2Se2_alpha": "01-080-2950 alpha BaCu2Se2.rtf",
+    "BaCu2Se2_beta": "04-008-2861 beta BaCu2Se2.rtf",
+    "Cu2Se": "01-080-4377 Cu2Se.rtf",
+    "CuSe": "00-049-1456 CuSe.rtf",
+    "BaSe": "01-071-4770 BaSe.rtf",
+    "BaSe2": "04-004-8560 BaSe2.rtf",
+    "BaSe3": "04-004-8559 BaSe3.rtf",
+    "BaSeO3": "04-014-7500 BaSeO3.rtf",
+    "BaSeO4": "04-011-7418 BaSeO4.rtf",
+    "Au": "00-004-0784 Au.rtf",
+    "In": "00-005-0642 In.rtf",
 }
 
 SYNTHESIS_CSV = PROCESSED_DATA_DIR / "bacuse2_synthesis_database_37samples.csv"
