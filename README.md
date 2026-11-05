@@ -94,7 +94,10 @@ strategies are provided:
   (`bacuse2_xrd_feature23_descriptors.csv`: position, FWHM, area, ratio to the
   α 29.4° cluster; not used by the optimizer), and BO suggestions.
 - `data/cif_files/` — CIF structures for the exploratory Le Bail fit in notebook
-  2 (α- and β-BaCu2Se2, Cu2Se, CuSe, BaSe, BaSe2, BaSe3, BaSeO3, BaSeO4).
+  2. The standard fit uses α- and β-BaCu2Se2, BaSeO3 and BaSe (the most
+  frequently matched impurities); the other CIFs (Cu2Se, CuSe, BaSe2, BaSe3,
+  BaSeO4) are kept for comparison runs, summarized in
+  `data/results/bacuse2_lebail_phase_set_comparison.csv`.
 - `outputs/figures/` and `outputs/reports/` — generated figures and the PDF
   report.
 

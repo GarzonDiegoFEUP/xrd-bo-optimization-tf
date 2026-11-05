@@ -272,18 +272,40 @@ def build_report(output_path: Path | None = None) -> Path:
             story.append(Spacer(1, 0.15 * cm))
             story.append(fig)
 
-    # 2c. Le Bail check with the extended CIF set
+    # 2c. Le Bail phase-set comparison
     story.append(Paragraph(
-        "An exploratory Le Bail profile fit (Bragg–Brentano proxy, cells fixed) was repeated for all 28 scans "
-        "with nine CIF phases (α- and β-BaCu<sub>2</sub>Se<sub>2</sub>, Cu<sub>2</sub>Se, CuSe, BaSe, "
-        "BaSe<sub>2</sub>, BaSe<sub>3</sub>, BaSeO<sub>3</sub>, BaSeO<sub>4</sub>) instead of five. Mean R<sub>wp</sub> "
-        "fell from 0.190 to 0.184 and GoF from 1.29 to 1.24. In the 22.1–23.1° window the RMSE fell from 23.0 to "
-        "19.9 counts (lower in 26 of 28 scans) and the calculated peak position error from 0.074° to 0.053°, "
-        "but the calculated peak height is still only 78 % of the observed one and a derivative-shaped residual "
-        "remains at the peak. Le Bail intensities are free and the cells are fixed, so the better fit shows "
-        "that the extra phases can account for the profile, not that β rather than α produces the 23° peak.",
+        "An exploratory Le Bail profile fit (Bragg–Brentano proxy, cells fixed) was run for all 28 scans. The standard "
+        "set is α- and β-BaCu<sub>2</sub>Se<sub>2</sub> plus BaSeO<sub>3</sub> and BaSe, the impurities matched in most "
+        "films (Cu<sub>2</sub>Se was never matched). It was compared with other phase sets (table). Extra phases "
+        "lower the overall R<sub>wp</sub> but hardly change the 22.1–23.1° window: the four-phase standard fits it "
+        "as well as nine phases. β alone fits the 23° window slightly better than α alone (lower RMSE in 18 of 28 "
+        "scans) but the whole pattern much worse, and α plus β fits the window best. Le Bail intensities are free and "
+        "the cells fixed, so this indicates that both polymorph lines help, not which one produces the 23° peak.",
         styles["BodySmall"],
     ))
+    comparison = pd.read_csv(RESULTS_DATA_DIR / "bacuse2_lebail_phase_set_comparison.csv")
+    header = ["Phase set", "R<sub>wp</sub>", "GoF", "23° window RMSE", "|peak pos. err.| (°)", "calc/obs height"]
+    rows = [[Paragraph(text, styles["TableHeaderSmall"]) for text in header]]
+    for _, row in comparison.iterrows():
+        rows.append([
+            Paragraph(row["phase_set"], styles["BodySmall"]),
+            f"{row['mean_rwp']:.3f}",
+            f"{row['mean_gof']:.2f}",
+            f"{row['window_22p1_23p1_rmse_counts']:.1f}",
+            f"{row['mean_abs_peak_position_error_deg']:.3f}",
+            f"{row['mean_calculated_over_observed_height']:.2f}",
+        ])
+    lebail_table = Table(rows, colWidths=[150, 45, 40, 70, 75, 65], repeatRows=1, hAlign="LEFT")
+    lebail_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1a3b5d")),
+        ("FONTSIZE", (0, 1), (-1, -1), 8),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#eef3f8")]),
+        ("GRID", (0, 0), (-1, -1), 0.25, colors.HexColor("#b0bec5")),
+        ("ALIGN", (1, 0), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+    ]))
+    story.append(Spacer(1, 0.15 * cm))
+    story.append(KeepTogether([lebail_table]))
     fig = _figure(ROOT_OUTPUTS_LEBAIL / "260901B4_lebail_fit.png")
     if fig is not None:
         story.append(Spacer(1, 0.15 * cm))

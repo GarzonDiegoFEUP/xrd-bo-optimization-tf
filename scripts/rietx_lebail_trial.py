@@ -25,13 +25,8 @@ OUTPUT_DIR = ROOT / "outputs" / "rietx_lebail_trial_fixed_cells"
 CIF_FILES = (
     "alpha BaCu2Se2.cif",
     "beta BaCu2Se2.cif",
-    "Cu2Se.cif",
-    "CuSe.cif",
-    "BaSe.cif",
-    "BaSe2.cif",
-    "BaSe3.cif",
     "BaSeO3.cif",
-    "BaSeO4.cif",
+    "BaSe.cif",
 )
 
 
