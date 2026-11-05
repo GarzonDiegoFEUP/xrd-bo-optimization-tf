@@ -68,7 +68,10 @@ strategies are provided:
      GI 0.2° scan for this sample.
   3. `3.bo_xrd.ipynb` — exploratory analysis (Spearman correlations, GP
      objective surface) and single-objective Bayesian-optimization suggestions
-     (scikit-optimize, weighted objective).
+     (scikit-optimize, weighted objective). It also compares four treatments of
+     the unassigned ~23° feature (as-is, excluded, as target, as impurity;
+     `data/results/bacuse2_bo_feature23_sensitivity.csv`) without changing the
+     production objective.
   4. `4.bo_xrd_ax.ipynb` — multi-objective Bayesian optimization with Ax
      (BoTorch): phase purity and crystallinity are separate objectives, the
      Pareto front is found via qNEHVI, and suggestions are compared against
@@ -87,7 +90,11 @@ strategies are provided:
 - `data/processed/` — synthesis tables and the BaCuSe upload-ID list
   (`bacuse_upload_ids.txt`).
 - `data/results/` — generated XRD metrics, classified per-peak export
-  (`bacuse2_xrd_peak_list.csv`), and BO suggestions.
+  (`bacuse2_xrd_peak_list.csv`), ~23° feature descriptors
+  (`bacuse2_xrd_feature23_descriptors.csv`: position, FWHM, area, ratio to the
+  α 29.4° cluster; not used by the optimizer), and BO suggestions.
+- `data/cif_files/` — CIF structures for the exploratory Le Bail fit in notebook
+  2 (α- and β-BaCu2Se2, Cu2Se, CuSe, BaSe, BaSe2, BaSe3, BaSeO3, BaSeO4).
 - `outputs/figures/` and `outputs/reports/` — generated figures and the PDF
   report.
 

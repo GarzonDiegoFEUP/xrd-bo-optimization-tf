@@ -73,6 +73,14 @@ BO_SUGGESTIONS_CSV = PROCESSED_DATA_DIR / "bacuse2_bo_suggestions.csv"
 GENERATED_XRD_METRICS_CSV = RESULTS_DATA_DIR / "bacuse2_xrd_analysis_metrics.csv"
 XRD_PEAK_LIST_CSV = RESULTS_DATA_DIR / "bacuse2_xrd_peak_list.csv"
 
+# The ~23 deg feature (alpha 011 at 22.64 deg or beta 101 at 23.01 deg) is not
+# assigned in production; these settings drive its descriptors and sensitivity check.
+FEATURE_23_PEAK_RANGE = (22.4, 23.3)
+FEATURE_23_AREA_WINDOW = ((22.20, 23.40), ((21.88, 22.02), (23.56, 23.72)))
+ALPHA_294_AREA_WINDOW = ((28.88, 29.62), ((28.62, 28.76), (29.76, 29.91)))
+FEATURE_23_DESCRIPTORS_CSV = RESULTS_DATA_DIR / "bacuse2_xrd_feature23_descriptors.csv"
+FEATURE_23_SENSITIVITY_CSV = RESULTS_DATA_DIR / "bacuse2_bo_feature23_sensitivity.csv"
+
 BO_PARAMETER_COLUMNS = (
     "hard_bake_temp_c",
     "selenization_temp_c",
