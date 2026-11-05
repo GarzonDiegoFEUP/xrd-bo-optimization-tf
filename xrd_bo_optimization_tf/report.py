@@ -25,6 +25,7 @@ from .config import (
     FIGURES_DIR,
     GENERATED_XRD_METRICS_CSV,
     NOMAD_SYNTHESIS_CSV,
+    OUTPUTS_DIR,
     REPORTS_DIR,
     RESULTS_DATA_DIR,
     SE_PULSE_DUTY_CYCLE_COLUMN,
@@ -35,6 +36,7 @@ from .config import (
 
 PAGE_WIDTH, _ = A4
 CONTENT_WIDTH = PAGE_WIDTH - 4 * cm
+ROOT_OUTPUTS_LEBAIL = OUTPUTS_DIR / "rietx_lebail_all_samples"
 
 
 def _styles():
@@ -269,6 +271,23 @@ def build_report(output_path: Path | None = None) -> Path:
         if fig is not None:
             story.append(Spacer(1, 0.15 * cm))
             story.append(fig)
+
+    # 2c. Le Bail check with the extended CIF set
+    story.append(Paragraph(
+        "An exploratory Le Bail profile fit (Bragg–Brentano proxy, cells fixed) was repeated for all 28 scans "
+        "with nine CIF phases (α- and β-BaCu<sub>2</sub>Se<sub>2</sub>, Cu<sub>2</sub>Se, CuSe, BaSe, "
+        "BaSe<sub>2</sub>, BaSe<sub>3</sub>, BaSeO<sub>3</sub>, BaSeO<sub>4</sub>) instead of five. Mean R<sub>wp</sub> "
+        "fell from 0.190 to 0.184 and GoF from 1.29 to 1.24. In the 22.1–23.1° window the RMSE fell from 23.0 to "
+        "19.9 counts (lower in 26 of 28 scans) and the calculated peak position error from 0.074° to 0.053°, "
+        "but the calculated peak height is still only 78 % of the observed one and a derivative-shaped residual "
+        "remains at the peak. Le Bail intensities are free and the cells are fixed, so the better fit shows "
+        "that the extra phases can account for the profile, not that β rather than α produces the 23° peak.",
+        styles["BodySmall"],
+    ))
+    fig = _figure(ROOT_OUTPUTS_LEBAIL / "260901B4_lebail_fit.png")
+    if fig is not None:
+        story.append(Spacer(1, 0.15 * cm))
+        story.append(fig)
 
     # 3. Main results
     story.append(Paragraph("3. Main results", styles["SectionHead"]))
