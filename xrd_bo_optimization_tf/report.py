@@ -227,6 +227,23 @@ def build_report(output_path: Path | None = None) -> Path:
     )
     story.append(Paragraph(done, styles["BodySmall"]))
 
+    refined_path = RESULTS_DATA_DIR / "bacuse2_rietx_refined_metrics.csv"
+    if refined_path.is_file():
+        refined = pd.read_csv(refined_path)
+        n_converged = int(refined["status"].eq("converged").sum())
+        n_rwp = int(refined["rwp"].notna().sum())
+        story.append(Paragraph("Refinement-based optimization readiness", styles["SectionHead"]))
+        story.append(Paragraph(
+            f"The four-phase Le Bail export has {len(refined)} scans, {n_rwp} profile residuals "
+            f"and {n_converged} converged fits. These are exploratory Bragg–Brentano proxy fits of GIXRD, "
+            "not validated quantitative phase analysis. Le Bail intensities cannot establish alpha weight "
+            "fractions, and the present fits do not provide calibrated phase-specific sizes or microstrain. "
+            "The requested refinement-based BO is therefore blocked; the heuristic results below remain "
+            "unchanged and must not be interpreted as physical weight fractions or crystallite sizes. "
+            "Rwp is a profile residual, not an impurity fraction or proof of a correct structural model.",
+            styles["BodySmall"],
+        ))
+
     # 2. XRD results figure
     story.append(Paragraph("2. XRD phase identification", styles["SectionHead"]))
     story.append(Paragraph(

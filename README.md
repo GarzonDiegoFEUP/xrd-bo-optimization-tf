@@ -147,6 +147,27 @@ intensity arrays directly.
 
 ## Reports
 
+### Refinement-based BO readiness
+
+The separate `rietx_refined_metrics` exporter reads the four-phase Le Bail
+summary and writes `data/results/bacuse2_rietx_refined_metrics.csv`. It preserves
+fractional Rwp, fit status, diagnostic codes and source provenance; missing
+alpha weight fraction, phase-specific crystallite size and microstrain are left
+blank with reasons. Rwp measures profile agreement, not phase purity. The
+existing fixed-cell Le Bail fits use a Bragg–Brentano proxy for GIXRD and cannot
+establish quantitative phase fractions or calibrated sizes.
+
+The experimental `prepare_refined_optimization_data` and `run_refined_ax`
+pathways require converged Rietveld results, calibrated alpha size, explicit
+validation flags and provenance references. Flags are researcher attestations,
+not independent verification. Notebook 3 includes a readiness check for the
+requested weighted Rwp score; notebook 4 includes a separate three-objective
+Ax readiness check. Neither generates refinement-based proposals from the
+present dataset. The existing heuristic BO remains unchanged and is clearly
+identified as such. A quantitative replacement requires appropriate diffraction
+geometry, phase/texture and instrumental broadening calibration, plus reviewed
+Rietveld and size results; a small Rwp alone is not validation.
+
 Rebuild the PDF report from the latest tables and figures with:
 
 ```bash

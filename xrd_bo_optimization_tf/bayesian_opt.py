@@ -194,6 +194,179 @@ def prepare_optimization_data(
     return prepared
 
 
+def prepare_refined_optimization_data(
+    metrics: pd.DataFrame,
+    parameter_columns: tuple[str, ...] = BO_PARAMETER_COLUMNS,
+    synthesis: pd.DataFrame | None = None,
+    include_pulse: bool = False,
+    include_process: bool = False,
+    beta: float = 0.25,
+) -> pd.DataFrame:
+    """Prepare independently validated quantitative Rietveld observations for BO.
+
+    Each row must have ``status='converged'``, ``fit_mode='Rietveld'``,
+    boolean ``rietveld_validated`` and ``size_calibration_validated`` flags,
+    and nonempty ``rietveld_validation_provenance`` and
+    ``size_calibration_provenance`` references. These are explicit caller
+    attestations, not verification of the cited evidence. Rwp is a
+    dimensionless fraction, not a percentage. Le Bail fits are ineligible.
+
+    Rows with missing, nonfinite or nonphysical measurements, unvalidated
+    provenance, or incomplete numerical recipe parameters are excluded.
+    ``synthesis`` can supply missing recipe columns, joined by sample_id.
+    Retained observations use the same grids and optional fixed-period pulse
+    mapping as the existing BO. Size is min-max normalized over retained rows;
+    if all sizes are equal its normalized contribution is zero. The objective is
+    ``(0.7 * alpha_weight_fraction + 0.3 * size_norm) * (1 - beta * rwp)``.
+    Beta must be finite and nonnegative and its penalty factor nonnegative. The returned attrs record the beta,
+    normalization range, exclusion counts, and optimization parameters.
+    Pass the result to ``suggest_next_conditions``; its current GP implementation
+    requires at least ten observations to fit a model.
+    """
+    try:
+        beta = float(beta)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("beta must be a finite nonnegative number") from exc
+    if not np.isfinite(beta) or beta < 0:
+        raise ValueError("beta must be a finite nonnegative number")
+
+    required = {
+        "sample_id", "status", "fit_mode", "rwp", "alpha_weight_fraction",
+        "alpha_crystallite_size_nm", "rietveld_validated",
+        "size_calibration_validated", "rietveld_validation_provenance",
+        "size_calibration_provenance",
+    }
+    missing = required.difference(metrics.columns)
+    if missing:
+        raise ValueError(
+            "Refined BO requires validated quantitative Rietveld and calibrated "
+            f"size data with provenance; missing columns: {sorted(missing)}. "
+            "The current Le Bail export is not eligible."
+        )
+    if metrics["sample_id"].isna().any() or metrics["sample_id"].astype(str).str.strip().eq("").any():
+        raise ValueError("Refined metrics require a nonempty sample_id for every row")
+    if metrics["sample_id"].duplicated().any():
+        raise ValueError("Refined metrics must contain one row per sample_id")
+
+    data = metrics.copy()
+    numeric = ("alpha_weight_fraction", "alpha_crystallite_size_nm", "rwp")
+    for column in numeric:
+        data[column] = pd.to_numeric(data[column], errors="coerce").astype(float)
+
+    def verified(value: object) -> bool:
+        return isinstance(value, (bool, np.bool_)) and bool(value)
+
+    def cited(value: object) -> bool:
+        return isinstance(value, str) and value.strip().lower() not in {
+            "", "none", "unknown", "n/a", "na", "null"
+        }
+
+    checks = {
+        "not_converged": data["status"].astype(str).str.strip().str.lower().eq("converged"),
+        "not_rietveld": data["fit_mode"].astype(str).str.strip().str.lower().eq("rietveld"),
+        "rietveld_unvalidated": data["rietveld_validated"].map(verified),
+        "size_unvalidated": data["size_calibration_validated"].map(verified),
+        "missing_rietveld_provenance": data["rietveld_validation_provenance"].map(cited),
+        "missing_size_provenance": data["size_calibration_provenance"].map(cited),
+        "invalid_alpha_fraction": np.isfinite(data["alpha_weight_fraction"]) & data["alpha_weight_fraction"].between(0, 1),
+        "invalid_size_nm": np.isfinite(data["alpha_crystallite_size_nm"]) & data["alpha_crystallite_size_nm"].gt(0),
+        "invalid_rwp": np.isfinite(data["rwp"]) & data["rwp"].ge(0),
+    }
+    eligible = pd.DataFrame(checks, index=data.index)
+    excluded = {name: int((~valid).sum()) for name, valid in checks.items()}
+    data = data.loc[eligible.all(axis=1)].copy()
+
+    def no_rows() -> ValueError:
+        return ValueError(
+            "No eligible refined BO rows: provide converged quantitative Rietveld "
+            "weight fractions, calibrated phase-specific sizes, finite fractional "
+            "Rwp, validation flags and provenance, and complete recipe parameters. "
+            f"Le Bail proxies are not eligible. Exclusion counts: {excluded}"
+        )
+
+    if data.empty:
+        raise no_rows()
+    parameters = tuple(parameter_columns)
+    if "se_pulse_count" in parameters:
+        raise ValueError("se_pulse_count is collinear with selenization_time_s; exclude it")
+    if include_process:
+        parameters = tuple(dict.fromkeys((*parameters, *PROCESS_BO_COLUMNS)))
+    if include_pulse and synthesis is None:
+        raise ValueError("include_pulse requires the synthesis table")
+    supplied_parameters = tuple(
+        column for column in parameters
+        if not (include_pulse and column == SE_PULSE_DUTY_CYCLE_COLUMN)
+    )
+
+    if synthesis is not None:
+        if "sample_id" not in synthesis:
+            raise ValueError("Synthesis table requires sample_id")
+        if synthesis["sample_id"].isna().any() or synthesis["sample_id"].duplicated().any():
+            raise ValueError("Synthesis table must contain one non-null row per sample_id")
+        missing_parameters = [column for column in supplied_parameters if column not in data]
+        available = [column for column in missing_parameters if column in synthesis]
+        data = data.merge(synthesis[["sample_id", *available]], on="sample_id", how="left", validate="one_to_one")
+
+    missing_parameters = set(supplied_parameters).difference(data.columns)
+    if missing_parameters:
+        raise ValueError(f"Refined BO is missing recipe parameter columns: {sorted(missing_parameters)}")
+    for column in supplied_parameters:
+        data[column] = pd.to_numeric(data[column], errors="coerce").astype(float)
+    complete = pd.Series(True, index=data.index)
+    for column in supplied_parameters:
+        complete &= np.isfinite(data[column])
+    excluded["incomplete_recipe"] = int((~complete).sum())
+    data = data.loc[complete].copy()
+    if data.empty:
+        raise no_rows()
+
+    # Keep the existing snapping/pulse implementation, using only truthful
+    # quantitative values as temporary inputs. Never expose proxy-named outputs.
+    data["phase_purity"] = data["alpha_weight_fraction"]
+    data["crystallinity"] = data["alpha_crystallite_size_nm"]
+    pulse_synthesis = None
+    if include_pulse:
+        pulse_columns = ["sample_id", "se_pulse_on_ms", "se_pulse_off_ms"]
+        if not set(pulse_columns).issubset(synthesis.columns):
+            raise ValueError("Pulse timing requires on/off columns in synthesis")
+        # Avoid merge suffixes if the metrics also contain pulse metadata.
+        data = data.drop(columns=[c for c in pulse_columns[1:] if c in data])
+        pulse_synthesis = synthesis[pulse_columns]
+    try:
+        prepared = prepare_optimization_data(
+            data, parameter_columns=parameters, synthesis=pulse_synthesis,
+            include_pulse=include_pulse,
+        )
+    except ValueError as exc:
+        if str(exc) == "No complete rows are available for Bayesian optimization":
+            excluded["incomplete_pulse"] = len(data)
+            raise no_rows() from exc
+        raise
+    excluded["incomplete_pulse"] = len(data) - len(prepared)
+    if include_pulse:
+        duty = prepared[SE_PULSE_DUTY_CYCLE_COLUMN]
+        if (~np.isfinite(duty) | ~duty.between(*SE_PULSE_DUTY_CYCLE_BOUNDS)).any():
+            raise ValueError("Observed pulse duty cycle is outside configured bounds")
+    prepared = prepared.rename(columns={"crystallinity_norm": "alpha_crystallite_size_norm"})
+    prepared = prepared.drop(columns=["phase_purity", "crystallinity"])
+    prepared["objective_unpenalized"] = (
+        0.7 * prepared["alpha_weight_fraction"]
+        + 0.3 * prepared["alpha_crystallite_size_norm"]
+    )
+    prepared["objective_penalty_factor"] = 1.0 - beta * prepared["rwp"]
+    if (prepared["objective_penalty_factor"] < 0).any():
+        raise ValueError("beta and Rwp produce a negative penalty factor")
+    prepared["objective"] = prepared["objective_unpenalized"] * prepared["objective_penalty_factor"]
+    prepared.attrs.pop("objective_penalty_lambda", None)
+    prepared.attrs["objective_rwp_beta"] = beta
+    prepared.attrs["alpha_crystallite_size_nm_range"] = (
+        float(prepared["alpha_crystallite_size_nm"].min()),
+        float(prepared["alpha_crystallite_size_nm"].max()),
+    )
+    prepared.attrs["refined_exclusion_counts"] = excluded
+    return prepared
+
+
 def suggest_next_conditions(
     prepared: pd.DataFrame,
     n_suggestions: int = 5,
