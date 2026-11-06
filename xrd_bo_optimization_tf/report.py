@@ -253,14 +253,12 @@ def build_report(output_path: Path | None = None) -> Path:
         "22.64° (4.6 %) and β-BaCu<sub>2</sub>Se<sub>2</sub> at 23.01° (3.0 %), 0.17° below and 0.20° above "
         "the sample 260901B2 peak. Across all films the feature sits at 22.86–22.98° in series 260429A/B/C, "
         "260721D and 260901A (closer to the β line) and at 22.68° in series 260929A (closer to the α line), "
-        "so it is a film-side reflection of the BaCu<sub>2</sub>Se<sub>2</sub> family rather than a Cu–Se, "
-        "Ba–Se or Ba–Se–O impurity line. In the eight films with the strongest peak it is 30–100 times more "
-        "intense relative to the main α and β lines than the cards predict, so strong texture is required. "
-        "A second-order peak at 46.6–46.9° (d<sub>1</sub>/d<sub>2</sub> = 2.00) gives d = 3.87–3.89 Å, closer to "
-        "β (101) at 3.863 Å than to α (011) at 3.925 Å; the β (103) line at 30.02° is at most marginal. This "
-        "favours the β polymorph but matches neither card exactly, so the assignment remains unconfirmed; "
-        "a symmetric θ–2θ scan, a rocking curve and a pole figure at 22.9° would settle it. The SLG substrate "
-        "shows no sharp peak at 23°.",
+        "but proximity alone cannot establish the phase. The researcher reports that the SLG substrate has no "
+        "sharp peak at 23°. Relative intensities differ from powder cards; texture is one possible explanation, "
+        "but background, overlapping peaks and geometry also matter. A feature near 46.6–46.9° is a possible "
+        "higher-order candidate, not an established second order: the analysis selected a maximum in a preset "
+        "window without demonstrating a statistically significant peak or a common origin. Longer scans, "
+        "calibration, rocking curves and pole figures can help distinguish the hypotheses.",
         styles["BodySmall"],
     ))
     for name in (
@@ -325,6 +323,45 @@ def build_report(output_path: Path | None = None) -> Path:
         f"from the optimizer because it has no observed variation."
     )
     story.append(Paragraph(results, styles["BodySmall"]))
+    weight_path = RESULTS_DATA_DIR / "bacuse2_bo_weight_sensitivity_observed.csv"
+    weight_suggestions_path = RESULTS_DATA_DIR / "bacuse2_bo_weight_sensitivity_suggestions.csv"
+    if weight_path.is_file() and weight_suggestions_path.is_file():
+        weight_observed = pd.read_csv(weight_path)
+        weight_suggestions = pd.read_csv(weight_suggestions_path)
+        weight_pivot = weight_observed.pivot(index="sample_id", columns="purity_weight", values="objective")
+        correlation = weight_pivot.corr(method="spearman")
+        story.append(Paragraph("Purity–crystallinity weight sensitivity", styles["SectionHead"]))
+        story.append(Paragraph(
+            "The same films, penalty and search space were used for purity/crystallinity weights "
+            "0.5/0.5, 0.7/0.3 and 0.9/0.1. The table shows the best observed film and the first "
+            "model-generated proposal in acquisition order, not a measured result. "
+            f"Observed score rank correlations versus 0.7/0.3 are {correlation.loc[0.5, 0.7]:.2f} "
+            f"(0.5/0.5) and {correlation.loc[0.9, 0.7]:.2f} (0.9/0.1). "
+            "Recipe differences can also reflect acquisition randomness and uncertainty; seed 0 is held fixed.",
+            styles["BodySmall"],
+        ))
+        headers = ["Purity / crystal.", "Best observed", "First proposal: bake °C", "Selen. °C / s", "CBC", "Se on / off ms"]
+        rows = [[Paragraph(text, styles["TableHeaderSmall"]) for text in headers]]
+        for weight in (0.5, 0.7, 0.9):
+            observed = weight_observed[weight_observed["purity_weight"].eq(weight)]
+            proposal = weight_suggestions[(weight_suggestions["purity_weight"].eq(weight)) & (weight_suggestions["rank"] == 1)].iloc[0]
+            rows.append([
+                f"{weight:.1f} / {1-weight:.1f}", str(observed.loc[observed["objective"].idxmax(), "sample_id"]),
+                f"{proposal['hard_bake_temp_c']:.0f}",
+                f"{proposal['selenization_temp_c']:.0f} / {proposal['selenization_time_s']:.0f}",
+                f"{proposal['cbc_ratio']:.2f}", f"{proposal['se_pulse_on_ms']:.0f} / {proposal['se_pulse_off_ms']:.0f}",
+            ])
+        table = Table(rows, colWidths=[70, 75, 75, 85, 40, 90], repeatRows=1, hAlign="LEFT")
+        table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1a3b5d")),
+            ("FONTSIZE", (0, 1), (-1, -1), 8),
+            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#eef3f8")]),
+            ("GRID", (0, 0), (-1, -1), 0.25, colors.HexColor("#b0bec5")),
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ]))
+        story.append(Spacer(1, 0.15 * cm))
+        story.append(KeepTogether([table]))
     for name in ("bacuse2_bo_correlations.png", "bacuse2_bo_gp_surface.png"):
         fig = _figure(FIGURES_DIR / name)
         if fig is not None:
@@ -385,6 +422,25 @@ def build_report(output_path: Path | None = None) -> Path:
             story.append(fig)
             story.append(Spacer(1, 0.15 * cm))
         story.append(_suggestions_table(moo, df_bo.attrs["parameter_columns"]))
+
+    three_path = RESULTS_DATA_DIR / "bacuse2_ax_experimental_3objective_observed_nondominated.csv"
+    if three_path.is_file():
+        observed_three = pd.read_csv(three_path)
+        story.append(Paragraph("Experimental three-objective comparison", styles["SectionHead"]))
+        story.append(Paragraph(
+            "An independent Ax experiment maximizes raw purity and normalized crystallinity while minimizing "
+            "A directly, without multiplying the first two outcomes by the penalty. Reference thresholds "
+            "(0, 0, 1.05) define the hypervolume baseline, not feasibility constraints. "
+            f"{len(observed_three)} of {len(df_bo)} complete films are nondominated among the observed films; "
+            "the displayed model predictions are not measurements and do not establish an exact Pareto surface. "
+            "Purity and A share peak classifications, and A includes the unassigned ~23° feature; it is not "
+            "an impurity fraction. This comparison does not replace the production recommendations.",
+            styles["BodySmall"],
+        ))
+        fig = _figure(FIGURES_DIR / "bacuse2_ax_experimental_3objective_observed_vs_modeled.png")
+        if fig is not None:
+            story.append(Spacer(1, 0.15 * cm))
+            story.append(fig)
 
     doc = SimpleDocTemplate(
         str(output_path),

@@ -71,11 +71,23 @@ strategies are provided:
      (scikit-optimize, weighted objective). It also compares four treatments of
      the unassigned ~23° feature (as-is, excluded, as target, as impurity;
      `data/results/bacuse2_bo_feature23_sensitivity.csv`) without changing the
-     production objective.
+      production objective. A separate 0.5/0.5, 0.7/0.3, 0.9/0.1 purity/
+      crystallinity weight sweep saves observed scores and GP proposals to
+      `data/results/bacuse2_bo_weight_sensitivity_observed.csv` and
+      `data/results/bacuse2_bo_weight_sensitivity_suggestions.csv`.
   4. `4.bo_xrd_ax.ipynb` — multi-objective Bayesian optimization with Ax
      (BoTorch): phase purity and crystallinity are separate objectives, the
      Pareto front is found via qNEHVI, and suggestions are compared against
-     notebook 3.
+      notebook 3. A separate experimental Ax run maximizes raw purity and
+      normalized crystallinity while minimizing unassigned/overlap area fraction
+      A, with hypervolume reference thresholds (0, 0, 1.05). Its observed
+      nondominated films and model-generated suggestions are saved separately as
+      `bacuse2_ax_experimental_3objective_observed_nondominated.csv` and
+      `bacuse2_ax_experimental_3objective_suggestions.csv` in `data/results/`.
+      These are not replacements for the screened production suggestions: A is a
+      screening proxy, includes the ambiguous ~23° feature, and is not an impurity
+      fraction. Candidate predictions and the observed front are not the exact
+      underlying trade-off surface.
 - `data/raw/` — local `.xrdml` backups; `data/raw/nomad_staging/` is a
   gitignored cache of NOMAD archives downloaded by notebook 1.
 - `data/references/` — ICDD reference cards (`.rtf`), keyed in
