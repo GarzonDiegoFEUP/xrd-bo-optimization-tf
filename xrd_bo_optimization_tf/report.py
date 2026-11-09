@@ -155,6 +155,26 @@ def _suggestions_table(suggestions: pd.DataFrame, parameter_columns) -> KeepToge
     return KeepTogether([table])
 
 
+def _compact_table(headers: list[str], rows: list[list[str]], widths: list[float]) -> Table:
+    styles = _styles()
+    header_style = ParagraphStyle(
+        "CompactTableHeader", parent=styles["TableHeaderSmall"], textColor=colors.white,
+    )
+    table = Table(
+        [[Paragraph(header, header_style) for header in headers], *rows],
+        colWidths=widths, repeatRows=1, hAlign="LEFT",
+    )
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1a3b5d")),
+        ("FONTSIZE", (0, 1), (-1, -1), 7.5),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#eef3f8")]),
+        ("GRID", (0, 0), (-1, -1), 0.25, colors.HexColor("#b0bec5")),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+    ]))
+    return table
+
+
 def build_report(output_path: Path | None = None) -> Path:
     """Assemble the analysis + BO report PDF and return its path."""
     output_path = output_path or (REPORTS_DIR / "bacuse2_xrd_bo_report.pdf")
@@ -323,6 +343,74 @@ def build_report(output_path: Path | None = None) -> Path:
         f"from the optimizer because it has no observed variation."
     )
     story.append(Paragraph(results, styles["BodySmall"]))
+    peak_dir = OUTPUTS_DIR / "synthesis_xrd_peak_exploration"
+    peak_corr_path = peak_dir / "peak_synthesis_correlations.csv"
+    cluster_path = peak_dir / "cluster_selection.csv"
+    peak_data_path = peak_dir / "analysis_dataset.csv"
+    if all(path.is_file() for path in (peak_corr_path, cluster_path, peak_data_path)):
+        peak_correlations = pd.read_csv(peak_corr_path)
+        cluster_selection = pd.read_csv(cluster_path)
+        peak_cohort = pd.read_csv(peak_data_path)
+        story.append(Paragraph("Detected XRD peaks versus synthesis", styles["SectionHead"]))
+        story.append(Paragraph(
+            f"Notebook 2.2 compares detected-peak positions, FWHM, processed peak heights and "
+            f"detection indicators with synthesis parameters for {len(peak_cohort)} films. Peaks are grouped "
+            "in selected 2θ regions, retaining the highest detected peak per region and film; undetected "
+            "position, width and height are missing rather than zero. PCA and clustering use regions "
+            "detected in at least 75% of films, median imputation and feature scaling. "
+            "Regions may combine phases, while heights depend on measurement and processing conditions. "
+            "Correlations are pairwise-complete and Benjamini–Hochberg adjusted across valid tests; "
+            "shared series and repeated recipes violate the independent-film assumption, so p and q "
+            "values are descriptive only.", styles["BodySmall"],
+        ))
+        selected_pairs = [
+            ("cbc_ratio", "peak32_height", "CBC vs 32° peak height"),
+            ("mo_coated_numeric", "peak34_fwhm_deg", "Mo coating vs 34° FWHM"),
+        ]
+        peak_rows = []
+        for input_name, output_name, label in selected_pairs:
+            matches = peak_correlations.loc[
+                peak_correlations["method"].eq("spearman")
+                & peak_correlations["synthesis"].eq(input_name)
+                & peak_correlations["xrd"].eq(output_name)
+            ]
+            if len(matches) == 1:
+                row = matches.iloc[0]
+                peak_rows.append([label, f"{int(row['n'])}", f"{row['correlation']:.2f}", f"{row['q_bh']:.3f}"])
+        if peak_rows:
+            story.append(Spacer(1, 0.15 * cm))
+            story.append(_compact_table(
+                ["Exploratory pair", "n", "Spearman ρ", "BH q"], peak_rows, [240, 40, 75, 65],
+            ))
+        best_k = cluster_selection.loc[cluster_selection["silhouette"].idxmax()]
+        stability_path = peak_dir / "subsample_stability.csv"
+        stability_text = ""
+        if stability_path.is_file():
+            stability = pd.read_csv(stability_path)["cluster_ari"].dropna()
+            if not stability.empty:
+                stability_text = (
+                    f" Across 80% subsamples, adjusted Rand index has median {stability.median():.2f} "
+                    f"and 10th percentile {stability.quantile(0.1):.2f}."
+                )
+        story.append(Paragraph(
+            "The 32° region contains both target and impurity labels, so its CBC association cannot "
+            "identify a phase. The Mo association is strongly confounded with series; neither establishes causality. "
+            f"XRD-only K-means had its highest tested silhouette at k={int(best_k['k'])} "
+            f"(silhouette {best_k['silhouette']:.2f}).{stability_text} Low separation and feature sensitivity make "
+            "the clusters exploratory rather than phase populations. Detected heights are not integrated "
+            "phase intensities, and missing detections and regions outside the chosen windows limit coverage.",
+            styles["BodySmall"],
+        ))
+        for name in ("peak_detection_and_cbc_example.png", "pca_scores.png"):
+            fig = _figure(peak_dir / name)
+            if fig is not None:
+                story.append(Spacer(1, 0.15 * cm))
+                story.append(fig)
+    else:
+        story.append(Paragraph(
+            "Detected-peak/synthesis analysis is unavailable: run notebook 2.2 to generate its tables and figures.",
+            styles["BodySmall"],
+        ))
     weight_path = RESULTS_DATA_DIR / "bacuse2_bo_weight_sensitivity_observed.csv"
     weight_suggestions_path = RESULTS_DATA_DIR / "bacuse2_bo_weight_sensitivity_suggestions.csv"
     if weight_path.is_file() and weight_suggestions_path.is_file():
@@ -400,7 +488,7 @@ def build_report(output_path: Path | None = None) -> Path:
     moo_path = RESULTS_DATA_DIR / "bacuse2_ax_moo_suggestions.csv"
     if moo_path.is_file():
         moo = pd.read_csv(moo_path)
-        story.append(Paragraph("5. Multi-objective optimization (Ax)", styles["SectionHead"]))
+        story.append(Paragraph("5. Two-objective optimization (Ax)", styles["SectionHead"]))
         story.append(Paragraph(
             "A complementary multi-objective search treats screening-adjusted phase purity and "
             "normalized crystallinity as two separate objectives: both are multiplied by the same "
@@ -426,21 +514,88 @@ def build_report(output_path: Path | None = None) -> Path:
     three_path = RESULTS_DATA_DIR / "bacuse2_ax_experimental_3objective_observed_nondominated.csv"
     if three_path.is_file():
         observed_three = pd.read_csv(three_path)
-        story.append(Paragraph("Experimental three-objective comparison", styles["SectionHead"]))
+        story.append(Paragraph("6. Experimental three-objective optimization (Ax)", styles["SectionHead"]))
         story.append(Paragraph(
-            "An independent Ax experiment maximizes raw purity and normalized crystallinity while minimizing "
+            "An independent Ax experiment maximizes raw heuristic purity and normalized inverse-FWHM "
+            "crystallinity while minimizing "
             "A directly, without multiplying the first two outcomes by the penalty. Reference thresholds "
             "(0, 0, 1.05) define the hypervolume baseline, not feasibility constraints. "
             f"{len(observed_three)} of {len(df_bo)} complete films are nondominated among the observed films; "
             "the displayed model predictions are not measurements and do not establish an exact Pareto surface. "
             "Purity and A share peak classifications, and A includes the unassigned ~23° feature; it is not "
-            "an impurity fraction. This comparison does not replace the production recommendations.",
+            "an impurity fraction. This comparison does not replace the production recommendations. "
+            "In the projection below, the two axes show purity and crystallinity and color represents the "
+            "third objective A; circles are observed films and crosses are model-predicted candidates.",
             styles["BodySmall"],
         ))
         fig = _figure(FIGURES_DIR / "bacuse2_ax_experimental_3objective_observed_vs_modeled.png")
         if fig is not None:
             story.append(Spacer(1, 0.15 * cm))
             story.append(fig)
+        story.append(Paragraph("Observed nondominated films", styles["SectionHead"]))
+        observed_rows = [
+            [str(row["sample_id"]), f"{row['phase_purity']:.3f}",
+             f"{row['crystallinity_norm']:.3f}", f"{row['unassigned_or_overlap_area_fraction']:.3f}"]
+            for _, row in observed_three.iterrows()
+        ]
+        story.append(_compact_table(
+            ["Observed film", "Purity proxy ↑", "Crystallinity<br/>proxy ↑", "A ↓"],
+            observed_rows, [145, 95, 105, 75],
+        ))
+        low_area = observed_three.loc[observed_three["unassigned_or_overlap_area_fraction"].idxmin()]
+        high_crystal = observed_three.loc[observed_three["crystallinity_norm"].idxmax()]
+        story.append(Paragraph(
+            f"Among these observed films, {low_area['sample_id']} has the lowest A "
+            f"({low_area['unassigned_or_overlap_area_fraction']:.3f}) but a purity proxy of "
+            f"{low_area['phase_purity']:.3f}; {high_crystal['sample_id']} has the highest normalized "
+            f"crystallinity ({high_crystal['crystallinity_norm']:.3f}) with A "
+            f"{high_crystal['unassigned_or_overlap_area_fraction']:.3f}. This illustrates the measured "
+            "screening-metric trade-off, not a phase-fraction determination.", styles["BodySmall"],
+        ))
+        candidates_path = RESULTS_DATA_DIR / "bacuse2_ax_experimental_3objective_suggestions.csv"
+        if candidates_path.is_file():
+            candidates = pd.read_csv(candidates_path).sort_values("proposal_order")
+            story.append(Paragraph("Three-objective candidate recipes", styles["SectionHead"]))
+            story.append(Paragraph(
+                "These candidates are in generation order, not ranked. Predicted mean ± model SEM "
+                "is evaluated at the quantized recipe and is not an experimental measurement. "
+                "Pulse period is fixed at 3200 ms; intermediate duty cycles are exploratory.",
+                styles["BodySmall"],
+            ))
+            recipe_rows = [
+                [str(int(row["proposal_order"])), f"{row['hard_bake_temp_c']:.0f}",
+                 f"{row['selenization_temp_c']:.0f}", f"{row['selenization_time_s']:.0f}",
+                 f"{row['cbc_ratio']:.3f}", f"{row['se_pulse_on_ms']:.0f} / {row['se_pulse_off_ms']:.0f}"]
+                for _, row in candidates.iterrows()
+            ]
+            story.append(KeepTogether([_compact_table(
+                ["Proposal", "Bake<br/>°C", "Selen.<br/>°C", "Selen.<br/>s", "CBC", "Se on / off<br/>ms"],
+                recipe_rows, [55, 60, 65, 65, 65, 110],
+            )]))
+            predictions = []
+            for _, row in candidates.iterrows():
+                predictions.append([
+                    str(int(row["proposal_order"])),
+                    f"{row['predicted_phase_purity_mean']:.3f} ± {row['predicted_phase_purity_sem']:.3f}",
+                    f"{row['predicted_crystallinity_norm_mean']:.3f} ± {row['predicted_crystallinity_norm_sem']:.3f}",
+                    f"{row['predicted_unassigned_or_overlap_area_fraction_mean']:.3f} ± {row['predicted_unassigned_or_overlap_area_fraction_sem']:.3f}",
+                ])
+            story.append(Spacer(1, 0.2 * cm))
+            story.append(KeepTogether([_compact_table(
+                ["Proposal", "Purity proxy ↑<br/>mean ± SEM", "Crystallinity proxy ↑<br/>mean ± SEM", "A ↓<br/>mean ± SEM"],
+                predictions, [55, 120, 130, 115],
+            )]))
+        else:
+            story.append(Paragraph(
+                "Three-objective candidate data unavailable; rerun the experimental section in notebook 4.",
+                styles["BodySmall"],
+            ))
+    else:
+        story.append(Paragraph("6. Experimental three-objective optimization (Ax)", styles["SectionHead"]))
+        story.append(Paragraph(
+            "Three-objective results unavailable; rerun the experimental section in notebook 4.",
+            styles["BodySmall"],
+        ))
 
     doc = SimpleDocTemplate(
         str(output_path),
